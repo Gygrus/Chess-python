@@ -96,7 +96,12 @@ class King(Figure):
 
 
 
-
+Harmonogram:
+  - 3 zajęcia: większa część backendu i widok menu głównego
+  - 4 zajęcia: działający backend + naprawa błędów, interfejs graficzny planszy 
+  - 5 zajęcia: dopieszczenie backendu (jeśli wymagane) i synchronizacja z frontendem, naprawa błędów
+  - 6 zajęcia: zsynchronizowany backend i frontend 
+  - 7 zajęcia: oddawanie gotowego projektu po ostatnich korektach błędów 
 
 
 
