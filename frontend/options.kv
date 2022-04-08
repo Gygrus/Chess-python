@@ -1,0 +1,68 @@
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+WindowManager:
+    MainMenu:
+    Options:
+
+
+<HoverButton>:
+    size_hint: [None, None]
+    size: [300, 100]
+
+
+
+
+<MainMenu>:
+    name: "main"
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: './assets/background-image.jpg'
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: None, None
+            size: self.minimum_size
+            spacing: 50
+
+            HoverButton:
+                text: "Zagraj"
+                on_release:
+                    root.manager.transition = FadeTransition()
+                    app.root.current = "options"
+
+
+            HoverButton:
+                text: "Wyjdź"
+                on_release: root.quit_application()
+
+
+<Options>:
+    name: "options"
+
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: './assets/background-image.jpg'
+
+    ConfigurationSettings:
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'bottom'
+
+        HoverButton:
+            text: "Powrót"
+            on_release:
+                app.root.current = "main"
+
+
+
