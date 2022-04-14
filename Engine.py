@@ -1,6 +1,4 @@
 from Chessboard import *
-from Figure import Figure
-
 
 def column(x):
     return {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7,}[x]
@@ -24,17 +22,21 @@ class Engine:
             self.chessboard.print_board()
             print("White turn") if self.current_player == 'white' else print("Black turn")
             string = input("Write your move:")
-            ## valitadion for input
-            self.move(map(string[0:2]), map(string[3:5]))
+            position = map(string[0:2])
+            destination = map(string[3:5])
+            figure = self.chessboard.object_at(position)
+            if self.current_player != figure.color:
+                print("You are trying to move opponent's figure")
+                print("Try again")
+                continue
+            if self.chessboard.is_possible_move(figure, destination):
+                self.move(figure, destination)
+            else:
+                print("It is not a chess move")
+                print("Try again")
 
-    def move(self, position, destination):
-        figure = self.chessboard.object_at(position)
-        if isinstance(figure, Figure) and self.current_player == figure.color:
-            figure.position = destination
-            self.chessboard.move_object(position, figure)
-            self.current_player = 'black' if self.current_player == 'white' else 'white'
-        else:
-            print("You are trying to move opponent's figure or empty place")
-            print("Try again")
-
-
+    def move(self, figure, destination):
+        old_position = figure.position
+        figure.position = destination
+        self.chessboard.move_object(old_position, figure)
+        self.current_player = 'black' if self.current_player == 'white' else 'white'

@@ -3,12 +3,22 @@ from Figure import Element, Figure
 from Vector import Vector
 
 
+def map_direction(direction):
+    return {Direction.UP: Vector(-1, 0), Direction.LEFT: Vector(0, -1), Direction.RIGHT: Vector(0, 1),
+            Direction.DOWN: Vector(1, 0), Direction.UP_RIGHT: Vector(-1, 1), Direction.UP_LEFT: Vector(-1, -1),
+            Direction.DOWN_RIGHT: Vector(1, 1), Direction.DOWN_LEFT: Vector(1, -1)}[direction]
+
+
 class Chessboard:
     def __init__(self):
         self.board = [[Element(Vector(i, j)) for i in range(8)] for j in range(8)]
         self.take_en_passant = None
-        self.knight_moves = [(1, 2), (1, -2), (2, 1), (2, -1), (-1, 2), (-1, -2), (-2, -1), (-2, 1)]
-        self.king_moves = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, 1), (1, -1), (1, 1), (-1, -1)]
+        self.white_king_position = Vector(7, 4)
+        self.black_king_position = Vector(0, 4)
+        self.knight_moves = [Vector(1, 2), Vector(1, -2), Vector(2, 1), Vector(2, -1), Vector(-1, 2), Vector(-1, -2),
+                             Vector(-2, -1), Vector(-2, 1)]
+        self.king_moves = [Vector(0, -1), Vector(0, 1), Vector(-1, 0), Vector(1, 0), Vector(-1, 1), Vector(1, -1),
+                           Vector(1, 1), Vector(-1, -1)]
 
         for i in range(8):
             self.board[6][i] = Pawn('white', Vector(6, i))
@@ -45,9 +55,77 @@ class Chessboard:
     def object_at(self, position):
         return self.board[position.x][position.y]
 
+    def is_figure(self, position):
+        return isinstance(self.board[position.x][position.y], Figure)
+
+    def color_at(self, position):
+        return self.board[position.x][position.y].color
+
     def move_object(self, old_position, element):
         self.board[element.position.x][element.position.y] = element
         self.board[old_position.x][old_position.y] = Element(old_position)
+
+    def get_take_en_passant(self):
+        return self.take_en_passant
+
+    def is_possible_move(self, element, destination):
+        if not destination.in_chessboard() or element.position.equal(destination):
+            return False
+
+        figure = self.object_at(destination)
+        if isinstance(figure, Figure) and figure.color == element.color:
+            return False
+
+        if isinstance(element, Knight):
+            for move in self.knight_moves:
+                if element.position.add(move).equal(destination):
+                    return True
+            return False
+
+        ## i czy nie jest koło króla załatwiamy w funkcji check
+        if isinstance(element, King):
+            for move in self.king_moves:
+                if element.position.add(move).equal(destination):
+                    return True
+            return False
+
+        if isinstance(element, Pawn):
+            if element.color == 'white':
+                if element.position.up().equal(destination) and not isinstance(figure, Figure):
+                    return True
+                if element.position.up().right().equal(destination) and isinstance(figure, Figure):
+                    return True
+                if element.position.up().left().equal(destination) and isinstance(figure, Figure):
+                    return True
+                if element.is_second_row() and destination.equal(element.position.up().up()):
+                    if not self.is_figure(element.position.up()) and not isinstance(figure, Figure):
+                        return True
+            else:
+                if element.position.down().equal(destination) and not isinstance(figure, Figure):
+                    return True
+                if element.position.down().right().equal(destination) and isinstance(figure, Figure):
+                    return True
+                if element.position.down().left().equal(destination) and isinstance(figure, Figure):
+                    return True
+                if element.is_second_row() and destination.equal(element.position.down().down()):
+                    if not self.is_figure(element.position.down()) and not isinstance(figure, Figure):
+                        return True
+
+        if isinstance(element, (Rook, Bishop, Queen)):
+            if not element.correct_move(destination):
+                return False
+
+            position = element.position
+            iterator = map_direction(element.direction(destination))
+
+            while not position.equal(destination):
+                position = position.add(iterator)
+                if position.equal(destination):
+                    return True
+                else:
+                    if self.is_figure(position):
+                        return False
+        return False
 
     def is_check(self, color_of_king):
         check = 0
@@ -60,7 +138,7 @@ class Chessboard:
 
         ## skoczki załatwione
         for move in self.knight_moves:
-            element = self.object_at(position_of_king.add(Vector(move[0], move[1])))
+            element = self.object_at(position_of_king.add(move))
             if element.position.in_chessboard() and element.color == opponent_color:
                 if isinstance(element, Knight):
                     check = 1
@@ -68,7 +146,7 @@ class Chessboard:
 
         ## król przeciwny załatwiony
         for move in self.king_moves:
-            element = self.object_at(position_of_king.add(Vector(move[0], move[1])))
+            element = self.object_at(position_of_king.add(move))
             if element.position.in_chessboard() and element.color == opponent_color:
                 if isinstance(element, King):
                     check = 1
@@ -214,6 +292,3 @@ class Chessboard:
             else:
                 break
         return check
-
-    def get_take_en_passant(self):
-        return self.take_en_passant

@@ -1,4 +1,5 @@
 from Chessboard import *
+from Vector import Direction
 
 
 def column(x):
@@ -21,6 +22,26 @@ class Figure(Element):
         self.position = position
         self.alive = 'yes'
 
+    def one_line(self, destination):
+        return self.position.one_line(destination)
+
+    def one_row(self, destination):
+        return self.position.one_row(destination)
+
+    def one_diagonal(self, destination):
+        return self.position.one_diagonal(destination)
+
+    def direction(self, destination):
+        if self.one_line(destination):
+            return Direction.UP if self.position.move_line_up(destination) else Direction.DOWN
+        if self.one_row(destination):
+            return Direction.RIGHT if self.position.move_row_right(destination) else Direction.LEFT
+        if self.one_diagonal(destination):
+            if self.position.move_line_up(destination):
+                return Direction.UP_RIGHT if self.position.move_row_right(destination) else Direction.UP_LEFT
+            else:
+                return Direction.DOWN_RIGHT if self.position.move_row_right(destination) else Direction.DOWN_LEFT
+
 
 class Pawn(Figure):
     def __init__(self, color, position):
@@ -29,21 +50,11 @@ class Pawn(Figure):
         self.position = position
         self.image = '\u265F' if self.color == 'white' else '\u2659'
 
+    def is_second_row(self):
+        return self.position.is_second_row() if self.color == 'white' else self.position.is_seventh_row()
+
     def calculate_possible_moves(self, board):
         pass
-    #     MOVES = []
-    #     if board.get_przelot is not None and self.color == 'white' and self.position.y == 3 and self.position.x - column(board.get_przelot) == 1:
-    #         MOVES.append((self.position.x + 1, self.position.y - 1))
-    #     if board.get_przelot is not None and self.color == 'white' and self.position.y == 3 and self.position.x - column(board.get_przelot) == -1:
-    #         MOVES.append((self.position.x - 1, self.position.y - 1))
-    #     if board.get_przelot is not None and self.color == 'black' and self.position.y == 4 and self.position.x - column(board.get_przelot) == 1:
-    #         MOVES.append((self.position.x + 1, self.position.y + 1))
-    #     if board.get_przelot is not None and self.color == 'black' and self.position.y == 4 and self.position.x - column(board.get_przelot) == -1:
-    #         MOVES.append((self.position.x - 1, self.position.y + 1))
-    #
-    #     if isinstance(board.object_at(self.position.up), Figure):
-    #         MOVES.append(self.position.up)
-
 
     def promotion(self):
         pass
@@ -64,6 +75,9 @@ class Bishop(Figure):
         self.position = position
         self.image = '\u265D' if self.color == 'white' else '\u2657'
 
+    def correct_move(self, destination):
+        return self.one_diagonal(destination)
+
 
 class Rook(Figure):
     def __init__(self, color, position):
@@ -72,6 +86,9 @@ class Rook(Figure):
         self.position = position
         self.image = '\u265C' if self.color == 'white' else '\u2656'
 
+    def correct_move(self, destination):
+        return self.one_row(destination) or self.one_line(destination)
+
 
 class Queen(Figure):
     def __init__(self, color, position):
@@ -79,6 +96,9 @@ class Queen(Figure):
         self.color = color
         self.position = position
         self.image = '\u265B' if self.color == 'white' else '\u2655'
+
+    def correct_move(self, destination):
+        return self.one_row(destination) or self.one_line(destination) or self.one_diagonal(destination)
 
 
 class King(Figure):
