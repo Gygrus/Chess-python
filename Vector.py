@@ -70,6 +70,15 @@ class Vector:
     def is_seventh_row(self):
         return self.x == 1
 
+    def is_fifth_row(self):
+        return self.x == 3
+
+    def is_fourth_row(self):
+        return self.x == 4
+
+    def is_adjacent_column(self, other):
+        return abs(self.y - other.y) == 1
+
 
 
 
