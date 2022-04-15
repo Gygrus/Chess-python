@@ -1,5 +1,7 @@
+import copy
+
 from Chessboard import *
-from Vector import Direction
+from Vector import *
 
 
 def column(x):
@@ -21,6 +23,7 @@ class Figure(Element):
         Element.__init__(self, position)
         self.position = position
         self.alive = 'yes'
+        self.moves = []
 
     def one_line(self, destination):
         return self.position.one_line(destination)
@@ -42,6 +45,17 @@ class Figure(Element):
             else:
                 return Direction.DOWN_RIGHT if self.position.move_row_right(destination) else Direction.DOWN_LEFT
 
+    def calculate(self, engine):
+        for i in range(8):
+            for j in range(8):
+                if engine.chessboard.is_possible_move(self, Vector(i, j)):
+                    old_eng = copy.deepcopy(engine)
+                    old_eng.move(old_eng.chessboard.object_at(self.position), Vector(i, j))
+                    king_position = old_eng.chessboard.white_king_position if old_eng.current_player == 'white' else old_eng.chessboard.black_king_position
+                    col = 'white' if old_eng.current_player == 'black' else 'black'
+                    if not old_eng.chessboard.is_check(king_position, col):
+                        self.moves.append(Vector(i, j))
+
 
 class Pawn(Figure):
     def __init__(self, color, position):
@@ -49,8 +63,9 @@ class Pawn(Figure):
         self.color = color
         self.position = position
         self.image = '\u265F' if self.color == 'white' else '\u2659'
+        self.en_passant = Vector(20, 20)
 
-    def is_second_row(self):
+    def is_starting_row(self):
         return self.position.is_second_row() if self.color == 'white' else self.position.is_seventh_row()
 
     def calculate_possible_moves(self, board):
@@ -84,6 +99,7 @@ class Rook(Figure):
         Figure.__init__(self, position)
         self.color = color
         self.position = position
+        self.right_to_castling = 'yes'
         self.image = '\u265C' if self.color == 'white' else '\u2656'
 
     def correct_move(self, destination):
