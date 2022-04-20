@@ -1,5 +1,5 @@
 from kivy.config import Config
-Config.set('graphics', 'resizable', False)
+# Config.set('graphics', 'resizable', False)
 
 
 from kivy.app import App
@@ -46,5 +46,5 @@ class MyMainApp(App):
         return kv
 
 if __name__ == "__main__":
-    Window.fullscreen = 'auto'
+    # Window.fullscreen = 'auto'
     MyMainApp().run()
