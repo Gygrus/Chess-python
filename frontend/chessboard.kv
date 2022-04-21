@@ -1,0 +1,48 @@
+
+<Cell>:
+    size_hint: [None, None]
+    size: [50, 50]
+
+    Image:
+        size_hint_y: None
+        size_hint_x: None
+        size: 40, 40
+        center: self.parent.center
+        source: self.parent.img_source
+
+
+<DemoUI>:
+    orientation: 'vertical'
+
+    canvas.before:
+        Color:
+            rgba: (40/255, 40/255, 40/255, 1)
+
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        ChessBoard:
+            cols: 8
+            rows: 8
+            size_hint: None, None
+            size: self.minimum_size
+            pos: (self.parent.width)/2, (self.parent.height)/2
+            id: chessboard
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        size_hint: [1, 0.3]
+
+        Button:
+            text: 'Reset chessboard'
+            size_hint: [None, None]
+            size: [300, 100]
+            center: 40, 23
+            on_release: chessboard.reset_chessboard()
+
