@@ -3,7 +3,6 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty, NumericProperty
 from kivy.graphics import Color, Rectangle
 from kivy.uix.image import Image
@@ -138,9 +137,6 @@ class ChessBoard(GridLayout):
 
         self.fill_chessboard()
 
-
-class ChessBoardScreen(Screen):
-    pass
 
 class ChessBoardDemo(App):
     def build(self):

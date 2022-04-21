@@ -1,12 +1,14 @@
 from kivy.config import Config
 # Config.set('graphics', 'resizable', False)
 
-import chessboard_demo as cbd
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
+from kivy.uix.image import Image
 from kivy.uix.button import Button
+from kivy.uix.widget import Widget
 
 class HoverButton(Button):
 
@@ -28,9 +30,6 @@ class MainMenu(Screen):
         Window.close()
     pass
 
-class ChessBoardView(Screen):
-    pass
-
 class Options(Screen):
     pass
 
@@ -38,8 +37,6 @@ class WindowManager(ScreenManager):
     pass
 
 
-
-Builder.load_file("chessboard.kv")
 Builder.load_file("config-panel.kv")
 kv = Builder.load_file("options.kv")
 
