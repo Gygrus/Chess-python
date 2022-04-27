@@ -48,44 +48,19 @@ class Engine:
 
     def move_and_validate(self, position, destination):
         figure = self.chessboard.object_at(position)
-        if self.current_player != figure.color:
-            print("You are trying to move opponent's figure")
-            print("Try again")
-            return
+
         if self.chessboard.is_possible_move(figure, destination):
-            old_chessboard = copy.deepcopy(self.chessboard)
             self.move(figure, destination)
-            king_position = self.chessboard.white_king_position if self.current_player == 'white' else self.chessboard.black_king_position
-            col = 'white' if self.current_player == 'black' else 'black'
-            if self.chessboard.is_check(king_position, col):
-                self.chessboard = old_chessboard
-                print("Your King is in check")
-                print("Try again")
-            else:
-                self.chessboard.for_en_passant(figure, position)
-                self.current_player = 'black' if self.current_player == 'white' else 'white'
+
+            self.chessboard.for_en_passant(figure, position)
+            self.current_player = 'black' if self.current_player == 'white' else 'white'
         elif isinstance(figure, King):
             if self.is_castle_possible(figure, destination):
                 col = 'white' if self.current_player == 'black' else 'black'
-                if self.chessboard.is_check(figure.position, col):
-                    print("Your King is in check")
-                    print("Try again")
-                    return
-                old_chessboard = copy.deepcopy(self.chessboard)
                 if destination.y == 6:
                     self.move(figure, Vector(destination.x, 5))
-                    if self.chessboard.is_check(figure.position, col):
-                        self.chessboard = old_chessboard
-                        print("When castling Your King is in check")
-                        print("Try again")
-                        return
                     self.move(figure, destination)
                     self.move(self.chessboard.object_at(Vector(destination.x, 7)), Vector(destination.x, 5))
-                    if self.chessboard.is_check(figure.position, col):
-                        self.chessboard = old_chessboard
-                        print("Your King is in check after castling")
-                        print("Try again")
-                        return
                     self.chessboard.for_en_passant(figure, position)
                     if self.current_player == 'white':
                         self.chessboard.white_king_position = figure.position
@@ -95,33 +70,14 @@ class Engine:
 
                 elif destination.y == 2:
                     self.move(figure, Vector(destination.x, 3))
-                    if self.chessboard.is_check(figure.position, col):
-                        self.chessboard = old_chessboard
-                        print("You are trying to move opponent's figure")
-                        print("Try again")
-                        return
                     self.move(figure, Vector(destination.x, 2))
                     self.move(self.chessboard.object_at(Vector(destination.x, 0)), Vector(destination.x, 3))
-                    if self.chessboard.is_check(figure.position, col):
-                        self.chessboard = old_chessboard
-                        print("You are trying to move opponent's figure")
-                        print("Try again")
-                        return
                     self.chessboard.for_en_passant(figure, position)
                     if self.current_player == 'white':
                         self.chessboard.white_king_position = figure.position
                     else:
                         self.chessboard.black_king_position = figure.position
                     self.current_player = 'black' if self.current_player == 'white' else 'white'
-
-
-            else:
-                print("It is not a chess move")
-                print("Try again")
-
-        else:
-            print("It is not a chess move")
-            print("Try again")
 
         self.clear_moves_in_figures()
         self.calculate_possible_moves()
@@ -300,7 +256,8 @@ class Engine:
             for j in range(8):
                 element = self.chessboard.object_at(Vector(i, j))
                 if element.color == self.current_player and isinstance(element, Figure):
-                    print(element.print_in_console(), translate_array(element.moves))
+                    # print(element.print_in_console(), translate_array(element.moves))
+                    pass
 
     def clear_moves_in_figures(self):
         for i in range(8):

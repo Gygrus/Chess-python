@@ -79,15 +79,15 @@ class Chessboard:
         self.board[old_position.x][old_position.y] = Element(old_position)
 
         if isinstance(element, Pawn) and (position.x == 7 or position.x == 0):
-            type = input("Type: q - queen, r - rook, b - bishop, k - knight: ")
-            if type == "q":
-                figure = Queen(element.color, position)
-            elif type == "r":
-                figure = Rook(element.color, position)
-            elif type == "b":
-                figure = Bishop(element.color, position)
-            else:
-                figure = Knight(element.color, position)
+            # type = input("Type: q - queen, r - rook, b - bishop, k - knight: ")
+            # if type == "q":
+            figure = Queen(element.color, position)
+            # elif type == "r":
+            #     figure = Rook(element.color, position)
+            # elif type == "b":
+            #     figure = Bishop(element.color, position)
+            # else:
+            #     figure = Knight(element.color, position)
 
             self.board[position.x][position.y] = figure
 
