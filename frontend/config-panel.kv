@@ -37,16 +37,26 @@
                 text: "Długość gry (min)"
 
             OptionInput:
+                id: time_value
+                input_type: 'number'
+                input_filter: 'int'
                 multiline: False
+
 
             OptionLabel:
                 text: "Wartość inkrementu (sek)"
 
             OptionInput:
+                id: increment_value
+                input_type: 'number'
+                input_filter: 'int'
                 multiline: False
+
 
         HoverButton:
             text: "Rozpocznij grę"
             pos_hint: {'center_x': .5}
             on_release:
                 app.root.current = "chessboard"
+                app.root.get_screen("chessboard").init_chess_game(time_value.text, increment_value.text)
+

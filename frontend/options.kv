@@ -13,15 +13,60 @@ WindowManager:
 
 <ChessBoardView>:
     name: "chessboard"
+    game_layout_object: game_ui
+
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
+        id: anchor1
 
-        DemoUI:
+        canvas.before:
+            Color:
+                rgba: (40/255, 40/255, 40/255, 1)
+
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+
+
+        BoxLayout:
+            orientation: 'horizontal'
+            cols: 3
+            id: chess_view
+
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                id: anchor1
+
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint: None, None
+                    size: self.minimum_size
+                    spacing: 50
+                    id: box1
+
+                    HoverButton:
+                        text: "Zatrzymaj czas"
+
+                    HoverButton:
+                        text: "Poddaj partię"
+
+                    HoverButton:
+                        text: "Cofnij ruch"
+
+            GameLayout:
+                id: game_ui
+
+
+            BoxLayout:
+                orientation: 'vertical'
 
 
 <MainMenu>:
     name: "main"
+    id: main
 
     AnchorLayout:
         anchor_x: 'center'
@@ -54,6 +99,7 @@ WindowManager:
 
 <Options>:
     name: "options"
+    id: options
 
     canvas:
         Rectangle:
@@ -62,6 +108,7 @@ WindowManager:
             source: './assets/background-image.jpg'
 
     ConfigurationSettings:
+
 
     AnchorLayout:
         anchor_x: 'center'

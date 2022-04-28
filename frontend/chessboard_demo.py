@@ -4,12 +4,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
-from kivy.properties import StringProperty, NumericProperty
+from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from kivy.graphics import Color, Rectangle, Ellipse
 from kivy.uix.image import Image
+from kivy.clock import Clock
+from functools import partial
 from backend import Engine as en
 from backend import Vector as v
 from backend import Figure as f
+
 
 
 # kv = Builder.load_file("chessboard.kv")
@@ -70,16 +73,6 @@ class Cell(Label):
 
             return True
 
-    # def on_touch_move(self, touch):
-    #     if touch.grab_current is self:
-    #         self.pos = [touch.x - 25, touch.y - 25]
-    # # now we only handle moves which we have grabbed
-    #
-    # def on_touch_up(self, touch):
-    #     if touch.grab_current is self:
-    #         touch.ungrab(self)
-    #         # and finish up here
-
     def touch_handler(self):
         if self.engine.chessboard.is_figure(self.position) and \
                 not isinstance(self.engine.current_figure, f.Figure):
@@ -93,53 +86,27 @@ class Cell(Label):
 
 
 
-        # if self.chessboard.board_positions[int(self.cell_id[0])][int(self.cell_id[1])] != "xx" and \
-        #         not self.chessboard.current_clicked:
-        #     self.chessboard.set_current_clicked(self)
-        # elif self.chessboard.current_clicked:
-        #     self.chessboard.update_positions(self)
-        # else:
-        #     self.chessboard.set_current_clicked(None)
+class GameLayout(BoxLayout):
+    chessboard_object = ObjectProperty()
 
-
-class DemoUI(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    def set_times(self, time_value_in_sec, increment_value):
+        self.chessboard_object.set_clocks(time_value_in_sec, increment_value)
+
 
 
 class ChessBoard(GridLayout):
     engine = en.Engine()
     cells = []
-
-    initial_positions_v2 = engine.chessboard.board
-
-    initial_positions = [["rb", "kb", "bb", "qb", "kingb", "bb", "kb", "rb"],
-                       ["pb", "pb", "pb", "pb", "pb", "pb", "pb", "pb"],
-                       ["xx", "xx", "xx", "xx", "xx", "xx", "xx", "xx"],
-                       ["xx", "xx", "xx", "xx", "xx", "xx", "xx", "xx"],
-                       ["xx", "xx", "xx", "xx", "xx", "xx", "xx", "xx"],
-                       ["xx", "xx", "xx", "xx", "xx", "xx", "xx", "xx"],
-                       ["pw", "pw", "pw", "pw", "pw", "pw", "pw", "pw"],
-                       ["rw", "kw", "bw", "qw", "kingw", "bw", "kw", "rw"]]
-
+    white_time_as_str_seconds = StringProperty()
+    white_time_as_str_minutes = StringProperty()
+    black_time_as_str_seconds = StringProperty()
+    black_time_as_str_minutes = StringProperty()
+    increment_value = 0
+    initial_positions_v2 = engine.chessboard.board.copy()
     board_positions = engine.chessboard.board
-
-
-
-    figures_dict = {"rb": "./assets/rb.png",
-                    "kb": "./assets/kb.png",
-                    "bb": "./assets/bb.png",
-                    "kingb": "./assets/kingb.png",
-                    "qb": "./assets/qb.png",
-                    "pb": "./assets/pb.png",
-                    "rw": "./assets/rw.png",
-                    "kw": "./assets/kw.png",
-                    "bw": "./assets/bw.png",
-                    "kingw": "./assets/kingw.png",
-                    "qw": "./assets/qw.png",
-                    "pw": "./assets/pw.png",
-                    "xx": "./assets/blank.png"
-                    }
 
 
     def __init__(self, **kwargs):
@@ -147,7 +114,60 @@ class ChessBoard(GridLayout):
         self.current_clicked = None
         self.fill_chessboard()
         self.cells = []
+        self.times = [3600, 3600]
+        self.clocks = [0, 0]
 
+
+    def set_clocks(self, time_value_in_min, increment_value):
+        if len(time_value_in_min) == 0 or time_value_in_min[0] == "-":
+            time_value_in_min = 0
+
+        if len(increment_value) == 0:
+            increment_value = 0
+
+        self.times = [int(time_value_in_min)*60, int(time_value_in_min)*60]
+        self.clocks = [0, 0]
+        self.clocks[0] = Clock.schedule_interval(partial(self.decrement_time, self.times, 0), 1)
+        self.current_timer = self.clocks[0]
+        self.increment_value = int(increment_value)
+        print(self.increment_value)
+
+    def decrement_time(self, time_remaining, index, *largs):
+        time_remaining[index] -= 1
+        self.update_current_time_counters()
+        if time_remaining[0] <= 0:
+            if self.engine.current_player == "white":
+                self.clocks[0].cancel()
+                print("Black won")
+            else:
+                self.clocks[1].cancel()
+                print("Black won")
+
+        elif time_remaining[1] <= 0:
+            if self.engine.current_player == "white":
+                self.clocks[0].cancel()
+                print("White won")
+            else:
+                self.clocks[1].cancel()
+                print("White won")
+
+
+
+    def increment_time(self, curr_counter, increment_value):
+        self.times[curr_counter] += increment_value
+        self.update_current_time_counters()
+
+
+    def change_current_timer(self, clocks, last_counter, curr_counter):
+        clocks[last_counter].cancel()
+        clocks[curr_counter] = Clock.schedule_interval(partial(self.decrement_time, self.times, curr_counter), 1)
+        self.increment_time(last_counter, self.increment_value)
+
+    def update_current_time_counters(self):
+        self.white_time_as_str_minutes = str(self.times[0] // 60)
+        self.white_time_as_str_seconds = str(self.times[0] % 60)
+        self.black_time_as_str_minutes = str(self.times[1] // 60)
+        self.black_time_as_str_seconds = str(self.times[1] % 60)
 
 
     def set_current_clicked(self, cell):
@@ -172,12 +192,21 @@ class ChessBoard(GridLayout):
         self.set_current_clicked(None)
         self.update_chessboard()
 
+
+
+
     def update_chessboard(self):
         while self.children:
             for cell in self.children:
                 self.remove_widget(cell)
 
         self.fill_chessboard()
+        if self.engine.current_figure is None:
+            if self.engine.current_player == "white":
+                self.change_current_timer(self.clocks, 1, 0)
+            else:
+                self.change_current_timer(self.clocks, 0, 1)
+
 
     def reset_chessboard(self):
         while self.children:
@@ -186,7 +215,7 @@ class ChessBoard(GridLayout):
 
         for x in range(8):
             for y in range(8):
-                self.board_positions[x][y] = self.initial_positions[x][y]
+                self.board_positions[x][y] = self.initial_positions_v2[x][y]
 
         self.fill_chessboard()
 
