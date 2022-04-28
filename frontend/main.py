@@ -1,12 +1,15 @@
 from kivy.config import Config
 # Config.set('graphics', 'resizable', False)
+from kivy.uix.boxlayout import BoxLayout
 
 import chessboard_demo as cbd
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
 from kivy.uix.button import Button
+from kivy.config import Config
 
 class HoverButton(Button):
 
@@ -29,7 +32,10 @@ class MainMenu(Screen):
     pass
 
 class ChessBoardView(Screen):
-    pass
+    game_layout_object = ObjectProperty()
+
+    def init_chess_game(self, time_value_in_sec, increment_value):
+        self.game_layout_object.set_times(time_value_in_sec, increment_value)
 
 class Options(Screen):
     pass
@@ -49,5 +55,5 @@ class MyMainApp(App):
         return kv
 
 if __name__ == "__main__":
-    # Window.fullscreen = 'auto'
+    Window.fullscreen = 'auto'
     MyMainApp().run()

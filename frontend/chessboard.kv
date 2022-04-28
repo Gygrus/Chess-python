@@ -11,20 +11,49 @@
         source: self.parent.img_source
 
 
-<DemoUI>:
+<GameLayout>:
     orientation: 'vertical'
+    id: chessboard_gui
+    chessboard_object: chessboard
 
-    canvas.before:
-        Color:
-            rgba: (40/255, 40/255, 40/255, 1)
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'top'
+        id: anchor2
 
-        Rectangle:
-            pos: self.pos
-            size: self.size
+        size_hint: [1, 0.2]
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: None, self.size_hint_y
+            size: self.minimum_size
+            spacing: 350
+
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: "Biały"
+
+                Label:
+                    text: "{minutes}:{seconds}".format(minutes = chessboard.white_time_as_str_minutes, seconds = chessboard.white_time_as_str_seconds)
+
+            BoxLayout:
+                orientation: 'vertical'
+
+                Label:
+                    text: "Biały"
+
+                Label:
+                    text: "{minutes}:{seconds}".format(minutes = chessboard.black_time_as_str_minutes , seconds = chessboard.black_time_as_str_seconds)
+
+
+
 
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
+        id: game_anchor
+
 
         ChessBoard:
             cols: 8
@@ -37,12 +66,12 @@
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
-        size_hint: [1, 0.3]
+        size_hint: [1, 0.2]
+
 
         Button:
             text: 'Reset chessboard'
             size_hint: [None, None]
             size: [300, 100]
-            center: 40, 23
             on_release: chessboard.reset_chessboard()
 
