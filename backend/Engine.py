@@ -90,7 +90,7 @@ class Engine:
         if self.chessboard.is_check(king_position, col):
             ## sprawdz czy mat
             print("CHECK")
-        self.chessboard.print_board()
+        # self.chessboard.print_board()
         print("White turn") if self.current_player == 'white' else print("Black turn")
 
 
@@ -101,14 +101,14 @@ class Engine:
             if self.is_checkmate():
                 print("CHECKMATE")
                 break
-            self.print_possible_moves()
+            # self.print_possible_moves()
 
             king_position = self.chessboard.white_king_position if self.current_player == 'white' else self.chessboard.black_king_position
             col = 'white' if self.current_player == 'black' else 'black'
             if self.chessboard.is_check(king_position, col):
                 ## sprawdz czy mat
                 print("CHECK")
-            self.chessboard.print_board()
+            # self.chessboard.print_board()
             print("White turn") if self.current_player == 'white' else print("Black turn")
             string = input("Write your move: ")
             if len(string) != 5:
