@@ -48,7 +48,15 @@ WindowManager:
                     id: box1
 
                     HoverButton:
-                        text: "Zatrzymaj czas"
+                        text: "Odwróć planszę"
+                        on_press:
+                            game_ui.chessboard_object.reverse_chessboard()
+                            game_ui.chessboard_object.revert_chessboard()
+
+                    HoverButton:
+                        text: "Pauza"
+                        on_press:
+                            game_ui.chessboard_object.switch_pause()
 
                     HoverButton:
                         text: "Poddaj partię"
