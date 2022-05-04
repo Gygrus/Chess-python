@@ -61,14 +61,19 @@ class Chessboard:
         return self.board[position.x][position.y].color
 
     def move_object(self, old_position, element):
+        killed = False
         position = element.position
         if isinstance(element, Pawn):
             if not self.is_figure(position) and old_position.y != element.position.y:
                 if element.color == 'white':
                     self.board[position.x + 1][position.y] = Element(Vector(position.x + 1, position.y))
+                    killed = True
                 else:
                     self.board[position.x - 1][position.y] = Element(Vector(position.x - 1, position.y))
+                    killed = True
 
+        if isinstance(self.object_at(position), Figure):
+            killed = True
         if isinstance(element, King):
             if element.color == 'white':
                 self.white_king_position = position
@@ -78,21 +83,10 @@ class Chessboard:
         self.board[position.x][position.y] = element
         self.board[old_position.x][old_position.y] = Element(old_position)
 
-        if isinstance(element, Pawn) and (position.x == 7 or position.x == 0):
-            # type = input("Type: q - queen, r - rook, b - bishop, k - knight: ")
-            # if type == "q":
-            figure = Queen(element.color, position)
-            # elif type == "r":
-            #     figure = Rook(element.color, position)
-            # elif type == "b":
-            #     figure = Bishop(element.color, position)
-            # else:
-            #     figure = Knight(element.color, position)
-
-            self.board[position.x][position.y] = figure
-
         if isinstance(element, (King, Rook)):
             element.right_to_castling = 'no'
+
+        return killed
 
     def for_en_passant(self, element, position):
         destination = element.position

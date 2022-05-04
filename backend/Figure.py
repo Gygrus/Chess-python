@@ -50,7 +50,7 @@ class Figure(Element):
             for j in range(8):
                 if engine.chessboard.is_possible_move(self, Vector(i, j)):
                     old_eng = copy.deepcopy(engine)
-                    old_eng.move(old_eng.chessboard.object_at(self.position), Vector(i, j))
+                    old_eng.move(self.position, Vector(i, j))
                     king_position = old_eng.chessboard.white_king_position if old_eng.current_player == 'white' else old_eng.chessboard.black_king_position
                     col = 'white' if old_eng.current_player == 'black' else 'black'
                     if not old_eng.chessboard.is_check(king_position, col):
@@ -73,12 +73,6 @@ class Pawn(Figure):
 
     def is_starting_row(self):
         return self.position.is_second_row() if self.color == 'white' else self.position.is_seventh_row()
-
-    def calculate_possible_moves(self, board):
-        pass
-
-    def promotion(self):
-        pass
 
 
 class Knight(Figure):
@@ -130,3 +124,9 @@ class King(Figure):
         self.position = position
         self.right_to_castling = 'yes'
         self.image = './assets/kingw.png' if self.color == 'white' else './assets/kingb.png'
+
+    def initial_position(self):
+        return self.position.equal(Vector(7, 4)) or self.position.equal(Vector(0, 4))
+
+    def is_castle_move(self, destination):
+        return self.initial_position() and self.position.column_distance(destination, 2)

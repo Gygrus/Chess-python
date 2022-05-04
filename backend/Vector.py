@@ -28,6 +28,9 @@ class Vector:
     def add(self, other):
         return Vector(self.x + other.x, self.y + other.y)
 
+    def subtract(self, other):
+        return Vector(self.x - other.x, self.y - other.y)
+
     def equal(self, other):
         return self.x == other.x and self.y == other.y
 
@@ -79,8 +82,8 @@ class Vector:
     def is_adjacent_column(self, other):
         return abs(self.y - other.y) == 1
 
-
-
+    def column_distance(self, other, difference):
+        return abs(self.y - other.y) == difference
 
 
 class Direction(Enum):
