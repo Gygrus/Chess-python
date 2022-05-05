@@ -88,8 +88,9 @@ class ChessBoard(GridLayout):
             return False
 
         time_remaining[index] -= 1
-        self.update_current_time_counters()
+
         if time_remaining[0] <= 0:
+            time_remaining[0] = 0
             self.finished = True
             if self.engine.current_player == "white":
                 self.clocks[0].cancel()
@@ -99,6 +100,7 @@ class ChessBoard(GridLayout):
                 print("Black won")
 
         elif time_remaining[1] <= 0:
+            time_remaining[1] = 0
             self.finished = True
             if self.engine.current_player == "white":
                 self.clocks[0].cancel()
@@ -107,6 +109,7 @@ class ChessBoard(GridLayout):
                 self.clocks[1].cancel()
                 print("White won")
 
+        self.update_current_time_counters()
 
 
     def increment_time(self, curr_counter, increment_value):
