@@ -1,4 +1,6 @@
 
+
+
 <Cell>:
     size_hint: [None, None]
     size: [50, 50]
@@ -41,7 +43,7 @@
                 orientation: 'vertical'
 
                 Label:
-                    text: "Biały"
+                    text: "Czarny"
 
                 Label:
                     text: "{minutes}:{seconds}".format(minutes = chessboard.black_time_as_str_minutes , seconds = chessboard.black_time_as_str_seconds)
@@ -68,10 +70,4 @@
         anchor_y: 'center'
         size_hint: [1, 0.2]
 
-
-        Button:
-            text: 'Reset chessboard'
-            size_hint: [None, None]
-            size: [300, 100]
-            on_release: chessboard.reset_chessboard()
 

@@ -1,0 +1,24 @@
+<PromotionModal>:
+    auto_dismiss: False
+    size_hint: 0.6, 0.2
+    id: prom_modal
+
+    title: self.text
+    BoxLayout:
+        orientation: "horizontal"
+
+        Button:
+            background_normal: prom_modal.queen_img
+            on_touch_down: prom_modal.submit_promotion("q")
+
+        Button:
+            background_normal: prom_modal.rook_img
+            on_touch_down: prom_modal.submit_promotion("r")
+
+        Button:
+            background_normal: prom_modal.bishop_img
+            on_touch_down: prom_modal.submit_promotion("b")
+
+        Button:
+            background_normal: prom_modal.knight_img
+            on_touch_down:prom_modal.submit_promotion("k")

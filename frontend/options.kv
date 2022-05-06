@@ -1,4 +1,5 @@
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import Factory kivy.factory.Factory
 
 WindowManager:
     MainMenu:
@@ -13,6 +14,7 @@ WindowManager:
 
 <ChessBoardView>:
     name: "chessboard"
+    id: chessboardview
     game_layout_object: game_ui
 
     AnchorLayout:

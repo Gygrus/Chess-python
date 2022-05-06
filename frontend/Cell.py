@@ -106,9 +106,13 @@ class Cell(Label):
             self.engine.current_figure = None
             self.chessboard.fill_chessboard()
         elif isinstance(self.engine.current_figure, f.Figure):
-            print('asdasd')
-            self.engine.move_to_position(self.position)
+            response = self.engine.move_to_position(self.position)
             self.chessboard.update_chessboard()
+            if response == "promotion":
+                if self.engine.current_player == "black":
+                    self.chessboard.change_current_timer(self.chessboard.clocks, 1, 0)
+                else:
+                    self.chessboard.change_current_timer(self.chessboard.clocks, 0, 1)
         else:
             self.engine.current_figure = None
 
