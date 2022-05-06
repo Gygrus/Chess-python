@@ -1,6 +1,7 @@
 import copy
 from backend.Chessboard import *
 from backend.Figure import *
+import time
 
 
 def column(x):
@@ -25,6 +26,7 @@ def map(string):
 class Engine:
     def __init__(self):
         self.chessboard = Chessboard()
+        self.frontend_modal = None
         self.current_player = 'white'
         self.current_figure = None
         self.game_record = []
@@ -32,27 +34,36 @@ class Engine:
         self.piece = []
         self.calculate_possible_moves()
 
+    def register_frontend_modal(self, frontend_modal):
+        self.frontend_modal = frontend_modal
+
+    def invoke_frontend_promotion(self, current_player, element, position):
+        self.frontend_modal.pop_up(self, current_player, element, position)
+
     def choose_figure(self, position):
         self.current_figure = self.chessboard.object_at(position)
         if self.current_player != self.current_figure.color:
             self.current_figure = None
 
     def move_to_position(self, destination):
+        response = None
         flag = True
         for vector in self.current_figure.moves:
             if vector.equal(destination):
-                self.move_and_validate(self.current_figure.position, destination)
+                response = self.move_and_validate(self.current_figure.position, destination)
                 self.current_figure = None
                 flag = False
                 break
         if flag:
             self.choose_figure(destination)
 
+        return response
+
     def move_and_validate(self, position, destination):
         figure = self.chessboard.object_at(position)
         self.move(position, destination)
         self.chessboard.for_en_passant(figure, position)
-        self.promotion() ## tu trzeba obsłużyć podmianę pionka na figure
+        response = self.promotion() ## tu trzeba obsłużyć podmianę pionka na figure
         self.game_record.append(self.piece)
         self.piece = []
         print(self.game_record)
@@ -67,6 +78,7 @@ class Engine:
             print("CHECKMATE") ## tu trzeba obsłużyć mata i zakończyć
             return
         print("White turn") if self.current_player == 'white' else print("Black turn")
+        return response
 
     def move(self, position, destination):
         figure = self.chessboard.object_at(position)
@@ -180,22 +192,48 @@ class Engine:
         return True
 
     def promotion(self):
+        if self.current_player == 'white':
+            row1 = 0
+        else:
+            row1 = 7
         for i in range(8):
-            element = self.chessboard.object_at(Vector(0, i))
+            element = self.chessboard.object_at(Vector(row1, i))
             position = element.position
-            if isinstance(element, Pawn) and (position.x == 7 or position.x == 0):
-                type = input("Type: q - queen, r - rook, b - bishop, k - knight: ")
-                if type == "q":
-                    figure = Queen(element.color, position)
-                    self.piece[0][4] = "Queen"
-                elif type == "r":
-                    figure = Rook(element.color, position)
-                    self.piece[0][4] = "Rook"
-                elif type == "b":
-                    figure = Bishop(element.color, position)
-                    self.piece[0][4] = "Bishop"
-                else:
-                    figure = Knight(element.color, position)
-                    self.piece[0][4] = "Knight"
-                self.chessboard.board[position.x][position.y] = figure
 
+
+            if isinstance(element, Pawn) and (position.x == 7 or position.x == 0):
+                self.invoke_frontend_promotion(self.current_player, element, position)
+                return "promotion"
+
+
+    def test_promotion(self, type, element, position):
+        figure = self.chessboard.object_at(position)
+        self.move(position, position)
+        self.chessboard.for_en_passant(figure, position)
+        if type == "q":
+            figure = Queen(element.color, position)
+            self.piece[0][4] = "Queen"
+        elif type == "r":
+            figure = Rook(element.color, position)
+            self.piece[0][4] = "Rook"
+        elif type == "b":
+            figure = Bishop(element.color, position)
+            self.piece[0][4] = "Bishop"
+        else:
+            figure = Knight(element.color, position)
+            self.piece[0][4] = "Knight"
+        self.chessboard.board[position.x][position.y] = figure
+
+        self.game_record.append(self.piece)
+        self.piece = []
+        print(self.game_record)
+        self.clear_moves_in_figures()
+        self.calculate_possible_moves()
+        king_position = self.chessboard.white_king_position if self.current_player == 'white' else self.chessboard.black_king_position
+        col = 'white' if self.current_player == 'black' else 'black'
+        if self.chessboard.is_check(king_position, col):
+            print("CHECK") ## tu trzeba obsłużyć szacha
+        if self.is_checkmate():
+            print("CHECKMATE") ## tu trzeba obsłużyć mata i zakończyć
+            return
+        print("White turn") if self.current_player == 'white' else print("Black turn")

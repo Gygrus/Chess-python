@@ -47,6 +47,7 @@ class WindowManager(ScreenManager):
 
 Builder.load_file("chessboard.kv")
 Builder.load_file("config-panel.kv")
+Builder.load_file("PromotionModal.kv")
 kv = Builder.load_file("options.kv")
 
 

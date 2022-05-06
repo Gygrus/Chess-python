@@ -13,10 +13,12 @@ from functools import partial
 from backend import Engine as en
 from backend import Vector as v
 from backend import Figure as f
+import PromotionModal
 import Cell
 
 class GameLayout(BoxLayout):
     chessboard_object = ObjectProperty()
+
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -28,7 +30,7 @@ class GameLayout(BoxLayout):
 
 class ChessBoard(GridLayout):
     engine = en.Engine()
-    cells = []
+    promotion_modal = PromotionModal.PromotionManager()
     white_time_as_str_seconds = StringProperty()
     white_time_as_str_minutes = StringProperty()
     black_time_as_str_seconds = StringProperty()
@@ -45,9 +47,14 @@ class ChessBoard(GridLayout):
         super().__init__(**kwargs)
         self.current_clicked = None
         self.fill_chessboard_initial()
-        # self.cells = []
         self.times = [3600, 3600]
         self.clocks = [0, 0]
+        self.engine.register_frontend_modal(self.promotion_modal)
+        # self.promotion_modal.register_frontend_chessboard(self)
+
+    def po_pup_promotion_modal(self, current_player):
+        self.promotion_modal.pop_up(current_player)
+
 
     def reverse_chessboard(self):
         self.reversed = not self.reversed
@@ -89,8 +96,14 @@ class ChessBoard(GridLayout):
 
         time_remaining[index] -= 1
 
+
         if time_remaining[0] <= 0:
             time_remaining[0] = 0
+
+        if time_remaining[1] <= 0:
+            time_remaining[1] = 0
+
+        if time_remaining[0] <= 0:
             self.finished = True
             if self.engine.current_player == "white":
                 self.clocks[0].cancel()
@@ -100,7 +113,6 @@ class ChessBoard(GridLayout):
                 print("Black won")
 
         elif time_remaining[1] <= 0:
-            time_remaining[1] = 0
             self.finished = True
             if self.engine.current_player == "white":
                 self.clocks[0].cancel()
@@ -127,6 +139,12 @@ class ChessBoard(GridLayout):
         self.white_time_as_str_seconds = str(self.times[0] % 600 // 10) + ":" + str(self.times[0] % 10) if len(str(self.times[0] % 600 // 10)) > 1 else str(0)+str(self.times[0] % 600 // 10) + ":" + str(self.times[0] % 10)
         self.black_time_as_str_minutes = str(self.times[1] // 600) if len(str(self.times[1] // 600)) > 1 else str(0)+str(self.times[1] // 600)
         self.black_time_as_str_seconds = str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10) if len(str(self.times[1] % 600 // 10)) > 1 else str(0)+str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10)
+
+    def handle_clock_change(self):
+        if self.engine.current_player == "white":
+            self.change_current_timer(self.clocks, 1, 0)
+        else:
+            self.change_current_timer(self.clocks, 0, 1)
 
     def fill_chessboard_initial(self):
         for x in range(8):
@@ -159,8 +177,3 @@ class ChessBoard(GridLayout):
                 self.remove_widget(cell)
 
         self.fill_chessboard_initial()
-
-
-
-
-
