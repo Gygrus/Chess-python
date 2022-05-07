@@ -90,6 +90,7 @@ class ChessBoard(GridLayout):
 
         time_remaining[index] -= 1
 
+
         if time_remaining[0] <= 0:
             time_remaining[0] = 0
 
