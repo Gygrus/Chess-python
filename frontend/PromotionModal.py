@@ -40,23 +40,20 @@ class PromotionManager():
     engine = None
     element = None
     position = None
-    # frontend_chessboard = None
 
-    def __init__(self):
-        pass
+    def __init__(self, frontend_chessboard):
+        self.frontend_chessboard = frontend_chessboard
 
-    def pop_up(self, engine, player, element, position):
+
+    def pop_up(self, player, element, position):
         self.element = element
         self.position = position
-        self.engine = engine
+        self.engine = self.frontend_chessboard.engine
         modal = PromotionModal(self, player)
-        print('haha')
         modal.open()
 
     def forward_submission(self, type):
-        print(type)
         self.engine.test_promotion(type, self.element, self.position)
-        App.get_running_app().root.get_screen("chessboard").ids["chess_view"].children[1].children[1].children[0].fill_chessboard()
-        App.get_running_app().root.get_screen("chessboard").ids["chess_view"].children[1].children[1].children[
-            0].handle_clock_change()
+        self.frontend_chessboard.fill_chessboard()
+        self.frontend_chessboard.handle_clock_change_after_promotion()
 

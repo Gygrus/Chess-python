@@ -65,13 +65,18 @@ WindowManager:
 
                     HoverButton:
                         text: "Cofnij ruch"
+                        on_press:
+                            history_view.display_move_on_history_tab("Test_move")
+
 
             GameLayout:
                 id: game_ui
 
 
-            BoxLayout:
-                orientation: 'vertical'
+            HistoryView:
+                id: history_view
+
+
 
 
 <MainMenu>:
