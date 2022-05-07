@@ -23,27 +23,11 @@ class Cell(Label):
         self.position = v.Vector(int(self.cell_id[0]), int(self.cell_id[1]))
 
         with self.canvas.before:
-            Color(self.num_mode / 2 + 1 / 8, self.num_mode / 4 + 1 / 5, self.num_mode / 3, 1)
-
-            self.rect = Rectangle(pos=self.center,
-                                  size=(self.width / 2.,
-                                        self.height / 2.))
-
-            self.bind(pos=self.update_rect,
-                      size=self.update_rect)
+            self.create_rect()
 
             if isinstance(self.engine.current_figure, f.Figure) and self.engine.current_figure.check_if_in_moves(
                     self.position):
-                Color(0, 0, 0, 0.2)
-
-                self.circ = Ellipse(angle_start=0,
-                                    angle_end=360,
-                                    pos=self.center,
-                                    size=(self.width,
-                                          self.height), )
-
-                self.bind(pos=self.update_circ,
-                          size=self.update_circ)
+                self.create_circ()
 
 
     def update_content(self, figure):
@@ -53,27 +37,31 @@ class Cell(Label):
         with self.canvas.before:
             if isinstance(self.engine.current_figure, f.Figure) and self.engine.current_figure.check_if_in_moves(
                     self.position):
-                Color(0, 0, 0, 0.2)
-
-                self.circ = Ellipse(angle_start=0,
-                                    angle_end=360,
-                                    pos=self.pos,
-                                    size=(self.width,
-                                          self.height), )
-
-                self.bind(pos=self.update_circ,
-                          size=self.update_circ)
+                self.create_circ()
 
             else:
                 self.canvas.before.clear()
-                Color(self.num_mode / 2 + 1 / 8, self.num_mode / 4 + 1 / 5, self.num_mode / 3, 1)
+                self.create_rect()
 
-                self.rect = Rectangle(pos=self.pos,
-                                      size=(self.width,
-                                            self.height))
+    def create_rect(self):
+        Color(self.num_mode / 2 + 1 / 8, self.num_mode / 4 + 1 / 5, self.num_mode / 3, 1)
+        self.rect = Rectangle(pos=self.pos,
+                              size=(self.width,
+                                    self.height))
 
-                self.bind(pos=self.update_rect,
-                          size=self.update_rect)
+        self.bind(pos=self.update_rect,
+                  size=self.update_rect)
+
+    def create_circ(self):
+        Color(0, 0, 0, 0.2)
+        self.circ = Ellipse(angle_start=0,
+                            angle_end=360,
+                            pos=self.pos,
+                            size=(self.width,
+                                  self.height), )
+
+        self.bind(pos=self.update_circ,
+                  size=self.update_circ)
 
     def clean_up(self):
         self.rect = None
@@ -108,11 +96,14 @@ class Cell(Label):
         elif isinstance(self.engine.current_figure, f.Figure):
             response = self.engine.move_to_position(self.position)
             self.chessboard.update_chessboard()
-            if response == "promotion":
+
+            if isinstance(response, list) and response[0] == "promotion":
                 if self.engine.current_player == "black":
                     self.chessboard.change_current_timer(self.chessboard.clocks, 1, 0)
                 else:
                     self.chessboard.change_current_timer(self.chessboard.clocks, 0, 1)
+
+                self.chessboard.promotion_modal.pop_up(response[1], response[2], response[3])
         else:
             self.engine.current_figure = None
 

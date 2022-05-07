@@ -3,6 +3,7 @@ from kivy.config import Config
 from kivy.uix.boxlayout import BoxLayout
 
 import chessboard_demo as cbd
+import HistoryView as hv
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
@@ -44,10 +45,11 @@ class WindowManager(ScreenManager):
     pass
 
 
-
+Builder.load_file("HistoryView.kv")
 Builder.load_file("chessboard.kv")
 Builder.load_file("config-panel.kv")
 Builder.load_file("PromotionModal.kv")
+
 kv = Builder.load_file("options.kv")
 
 

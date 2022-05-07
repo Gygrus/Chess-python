@@ -26,7 +26,7 @@ def map(string):
 class Engine:
     def __init__(self):
         self.chessboard = Chessboard()
-        self.frontend_modal = None
+        # self.frontend_modal = None
         self.current_player = 'white'
         self.current_figure = None
         self.game_record = []
@@ -34,11 +34,11 @@ class Engine:
         self.piece = []
         self.calculate_possible_moves()
 
-    def register_frontend_modal(self, frontend_modal):
-        self.frontend_modal = frontend_modal
+    # def register_frontend_modal(self, frontend_modal):
+    #     self.frontend_modal = frontend_modal
 
-    def invoke_frontend_promotion(self, current_player, element, position):
-        self.frontend_modal.pop_up(self, current_player, element, position)
+    # def invoke_frontend_promotion(self, current_player, element, position):
+    #     self.frontend_modal.pop_up(current_player, element, position)
 
     def choose_figure(self, position):
         self.current_figure = self.chessboard.object_at(position)
@@ -202,8 +202,7 @@ class Engine:
 
 
             if isinstance(element, Pawn) and (position.x == 7 or position.x == 0):
-                self.invoke_frontend_promotion(self.current_player, element, position)
-                return "promotion"
+                return ["promotion", self.current_player, element, position]
 
 
     def test_promotion(self, type, element, position):

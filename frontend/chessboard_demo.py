@@ -30,7 +30,6 @@ class GameLayout(BoxLayout):
 
 class ChessBoard(GridLayout):
     engine = en.Engine()
-    promotion_modal = PromotionModal.PromotionManager()
     white_time_as_str_seconds = StringProperty()
     white_time_as_str_minutes = StringProperty()
     black_time_as_str_seconds = StringProperty()
@@ -49,12 +48,7 @@ class ChessBoard(GridLayout):
         self.fill_chessboard_initial()
         self.times = [3600, 3600]
         self.clocks = [0, 0]
-        self.engine.register_frontend_modal(self.promotion_modal)
-        # self.promotion_modal.register_frontend_chessboard(self)
-
-    def po_pup_promotion_modal(self, current_player):
-        self.promotion_modal.pop_up(current_player)
-
+        self.promotion_modal = PromotionModal.PromotionManager(self)
 
     def reverse_chessboard(self):
         self.reversed = not self.reversed
@@ -140,7 +134,7 @@ class ChessBoard(GridLayout):
         self.black_time_as_str_minutes = str(self.times[1] // 600) if len(str(self.times[1] // 600)) > 1 else str(0)+str(self.times[1] // 600)
         self.black_time_as_str_seconds = str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10) if len(str(self.times[1] % 600 // 10)) > 1 else str(0)+str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10)
 
-    def handle_clock_change(self):
+    def handle_clock_change_after_promotion(self):
         if self.engine.current_player == "white":
             self.change_current_timer(self.clocks, 1, 0)
         else:
