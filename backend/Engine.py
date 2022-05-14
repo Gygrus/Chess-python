@@ -12,15 +12,23 @@ def row(x):
     return {'8': 0, '7': 1, '6': 2, '5': 3, '4': 4, '3': 5, '2': 6, '1': 7,}[x]
 
 
+def reverse_column(x):
+    return {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h',}[x]
+
+
+def reverse_row(x):
+    return {0: 8, 1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1,}[x]
+
+
 def map(string):
     return Vector(row(string[1]), column(string[0]))
 
 
-# def translate_array(T):
-#     S = []
-#     for i in T:
-#         S.append((i.x, i.y))
-#     return S
+def translate_array(T):
+    S = []
+    for i in T:
+        S.append((i.x, i.y))
+    return S
 
 
 class Engine:
@@ -30,8 +38,9 @@ class Engine:
         self.current_player = 'white'
         self.current_figure = None
         self.game_record = []
-        self.history = []
+        # self.history = []
         self.piece = []
+        self.state = None
         self.calculate_possible_moves()
 
     # def register_frontend_modal(self, frontend_modal):
@@ -60,23 +69,33 @@ class Engine:
         return response
 
     def move_and_validate(self, position, destination):
+        print("-------")
         figure = self.chessboard.object_at(position)
         self.move(position, destination)
         self.chessboard.for_en_passant(figure, position)
         response = self.promotion() ## tu trzeba obsłużyć podmianę pionka na figure
+        self.convert_record()
         self.game_record.append(self.piece)
         self.piece = []
-        print(self.game_record)
+        self.print_game_record()
         self.current_player = 'black' if self.current_player == 'white' else 'white'
         self.clear_moves_in_figures()
         self.calculate_possible_moves()
+        # self.print_possible_moves()
         king_position = self.chessboard.white_king_position if self.current_player == 'white' else self.chessboard.black_king_position
         col = 'white' if self.current_player == 'black' else 'black'
         if self.chessboard.is_check(king_position, col):
+            self.state = "check"
             print("CHECK") ## tu trzeba obsłużyć szacha
-        if self.is_checkmate():
-            print("CHECKMATE") ## tu trzeba obsłużyć mata i zakończyć
-            return
+            if self.is_opponent_has_no_moves():
+                print("CHECKMATE") ## tu trzeba obsłużyć mata i zakończyć
+                self.state = "checkmate"
+                return
+        else:
+            if self.is_opponent_has_no_moves():
+                print("DRAW") ## tu trzeba obsłużyć pata i zakończyć
+                self.state = "draw"
+                return
         print("White turn") if self.current_player == 'white' else print("Black turn")
         return response
 
@@ -167,13 +186,13 @@ class Engine:
                             figure.moves.append(Vector(row, 2))
                             old_eng.chessboard.board[row][2] = figure
 
-    # def print_possible_moves(self):
-    #     for i in range(8):
-    #         for j in range(8):
-    #             element = self.chessboard.object_at(Vector(i, j))
-    #             if element.color == self.current_player and isinstance(element, Figure):
-    #                 # print(element.print_in_console(), translate_array(element.moves))
-    #                 pass
+    def print_possible_moves(self):
+        for i in range(8):
+            for j in range(8):
+                element = self.chessboard.object_at(Vector(i, j))
+                if element.color == self.current_player and isinstance(element, Figure):
+                    print(element.print_in_console(), translate_array(element.moves))
+                    pass
 
     def clear_moves_in_figures(self):
         for i in range(8):
@@ -182,7 +201,7 @@ class Engine:
                 if isinstance(element, Figure) and element.color == self.current_player:
                     element.moves = []
 
-    def is_checkmate(self):
+    def is_opponent_has_no_moves(self):
         for i in range(8):
             for j in range(8):
                 element = self.chessboard.object_at(Vector(i, j))
@@ -211,28 +230,67 @@ class Engine:
         self.chessboard.for_en_passant(figure, position)
         if type == "q":
             figure = Queen(element.color, position)
-            self.piece[0][4] = "Queen"
+            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 11] + ' ' + "Queen"
         elif type == "r":
             figure = Rook(element.color, position)
-            self.piece[0][4] = "Rook"
+            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 12] + ' ' + "Rook"
         elif type == "b":
             figure = Bishop(element.color, position)
-            self.piece[0][4] = "Bishop"
+            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 12] + ' ' + "Bishop"
         else:
             figure = Knight(element.color, position)
-            self.piece[0][4] = "Knight"
+            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 12] + ' ' + "Knight"
         self.chessboard.board[position.x][position.y] = figure
 
-        self.game_record.append(self.piece)
+        self.print_game_record()
         self.piece = []
-        print(self.game_record)
         self.clear_moves_in_figures()
         self.calculate_possible_moves()
         king_position = self.chessboard.white_king_position if self.current_player == 'white' else self.chessboard.black_king_position
         col = 'white' if self.current_player == 'black' else 'black'
         if self.chessboard.is_check(king_position, col):
             print("CHECK") ## tu trzeba obsłużyć szacha
-        if self.is_checkmate():
-            print("CHECKMATE") ## tu trzeba obsłużyć mata i zakończyć
-            return
+            self.state = "check"
+            if self.is_opponent_has_no_moves():
+                print("CHECKMATE") ## tu trzeba obsłużyć mata i zakończyć
+                self.state = "checkmate"
+                return
+        else:
+            if self.is_opponent_has_no_moves():
+                self.state = "draw"
+                print("DRAW") ## tu trzeba obsłużyć pata i zakończyć
+                return
         print("White turn") if self.current_player == 'white' else print("Black turn")
+
+    def print_game_record(self):
+        print(self.game_record)
+        # counter = 1
+        # for object in self.game_record:
+        #     for move in object:
+        #         print(move)
+        #         # print(counter, "|", move[0], "(", move[1].x, move[1].y, ")", "(", move[2].x, move[2].y, ")", move[3], move[4], "|", end=" ")
+        #     counter += 1
+        # print()
+
+    def convert_record(self):
+        if len(self.piece) == 2:
+            if self.piece[1][2].y == 6:
+                rec = 'O-O'
+            else:
+                rec = 'O-O-O'
+
+        else:
+            T = self.piece[0]
+            rec = T[0]
+            rec += ' ' + str(reverse_column(T[1].y)) + str(reverse_row(T[1].x))
+            if T[3] == True:
+                rec += 'x'
+            else:
+                rec += ' '
+            rec += str(reverse_column(T[2].y)) + str(reverse_row(T[2].x))
+
+            if T[1].equal(T[2]):
+                rec += ' ' + T[4]
+
+        self.piece = [rec]
+

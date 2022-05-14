@@ -41,6 +41,10 @@ class Chessboard:
         self.board[0][6] = Knight('black', Vector(0, 6))
         self.board[0][7] = Rook('black', Vector(0, 7))
 
+        # self.board[2][0] = King('white', Vector(2, 0))
+        # self.board[7][7] = Rook('white', Vector(7, 7))
+        # self.board[0][0] = King('black', Vector(0, 0))
+
     def print_board(self):
         print('   a   b   c  d   e   f  g   h')
         for i in range(8):
