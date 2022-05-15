@@ -58,19 +58,23 @@ WindowManager:
                     HoverButton:
                         text: "Pauza"
                         on_press:
-                            game_ui.chessboard_object.switch_pause()
+                            game_ui.chessboard_object.timer_manager.switch_pause()
 
                     HoverButton:
                         text: "Poddaj partię"
+                        on_press:
+                            game_ui.chessboard_object.concede()
 
                     HoverButton:
                         text: "Cofnij ruch"
                         on_press:
-                            history_view.display_move_on_history_tab("Test_move")
+                            game_ui.chessboard_object.restore_chessboard_state()
+
 
 
             GameLayout:
                 id: game_ui
+                history_object: history_view
 
 
             HistoryView:

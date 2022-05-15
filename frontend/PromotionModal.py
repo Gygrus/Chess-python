@@ -54,6 +54,9 @@ class PromotionManager():
 
     def forward_submission(self, type):
         self.engine.test_promotion(type, self.element, self.position)
+        self.frontend_chessboard.previous_states.hist.pop()
+        self.frontend_chessboard.store_chessboard_state()
         self.frontend_chessboard.fill_chessboard()
-        self.frontend_chessboard.handle_clock_change_after_promotion()
+        self.frontend_chessboard.timer_manager.handle_clock_change_after_promotion()
+
 

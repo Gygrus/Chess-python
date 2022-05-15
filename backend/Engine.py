@@ -34,24 +34,24 @@ def translate_array(T):
 class Engine:
     def __init__(self):
         self.chessboard = Chessboard()
-        # self.frontend_modal = None
         self.current_player = 'white'
         self.current_figure = None
         self.game_record = []
         # self.history = []
         self.piece = []
-        self.state = None
+        self.state = ""
         self.calculate_possible_moves()
 
-    # def register_frontend_modal(self, frontend_modal):
-    #     self.frontend_modal = frontend_modal
 
-    # def invoke_frontend_promotion(self, current_player, element, position):
-    #     self.frontend_modal.pop_up(current_player, element, position)
+    def switch_players(self):
+        if self.current_player == "white":
+            self.current_player = "black"
+        else:
+            self.current_player = "white"
 
     def choose_figure(self, position):
         self.current_figure = self.chessboard.object_at(position)
-        if self.current_player != self.current_figure.color:
+        if isinstance(self.current_figure, Figure) and self.current_player != self.current_figure.color:
             self.current_figure = None
 
     def move_to_position(self, destination):
@@ -70,6 +70,7 @@ class Engine:
 
     def move_and_validate(self, position, destination):
         print("-------")
+        self.state = ""
         figure = self.chessboard.object_at(position)
         self.move(position, destination)
         self.chessboard.for_en_passant(figure, position)
@@ -223,6 +224,8 @@ class Engine:
             if isinstance(element, Pawn) and (position.x == 7 or position.x == 0):
                 return ["promotion", self.current_player, element, position]
 
+        return ["move"]
+
 
     def test_promotion(self, type, element, position):
         figure = self.chessboard.object_at(position)
@@ -233,13 +236,13 @@ class Engine:
             self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 11] + ' ' + "Queen"
         elif type == "r":
             figure = Rook(element.color, position)
-            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 12] + ' ' + "Rook"
+            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 11] + ' ' + "Rook"
         elif type == "b":
             figure = Bishop(element.color, position)
-            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 12] + ' ' + "Bishop"
+            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 11] + ' ' + "Bishop"
         else:
             figure = Knight(element.color, position)
-            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 12] + ' ' + "Knight"
+            self.game_record[len(self.game_record) - 1][0] = self.game_record[len(self.game_record) - 1][0][0: 11] + ' ' + "Knight"
         self.chessboard.board[position.x][position.y] = figure
 
         self.print_game_record()

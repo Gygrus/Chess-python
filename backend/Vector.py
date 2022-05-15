@@ -7,6 +7,9 @@ class Vector:
         self.x = x
         self.y = y
 
+    def __str__(self):
+        return str(self.x) + " " + str(self.y)
+
     def black_or_white_cell(self):
         return (self.x + self.y) % 2
 
