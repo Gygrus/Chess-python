@@ -1,3 +1,6 @@
+from ctypes import windll, c_int64
+windll.user32.SetProcessDpiAwarenessContext(c_int64(-4))
+
 from kivy.config import Config
 # Config.set('graphics', 'resizable', False)
 from kivy.uix.boxlayout import BoxLayout

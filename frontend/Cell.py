@@ -89,22 +89,20 @@ class Cell(Label):
                 not isinstance(self.engine.current_figure, f.Figure) and self.figure.color == self.engine.current_player and \
                 self.figure is not self.engine.current_figure:
             self.engine.choose_figure(self.position)
-            self.chessboard.update_chessboard()
+            # self.chessboard.update_chessboard()
+            self.chessboard.fill_chessboard()
         elif self.figure is self.engine.current_figure:
             self.engine.current_figure = None
             self.chessboard.fill_chessboard()
         elif isinstance(self.engine.current_figure, f.Figure):
             response = self.engine.move_to_position(self.position)
-            self.chessboard.update_chessboard()
+            if response:
+                self.chessboard.update_chessboard()
+                self.chessboard.history_widget.display_move_on_history_tab(self.engine.game_record[-1][0],
+                                                                           self.engine.current_player)
+            else:
+                self.chessboard.fill_chessboard()
+            self.chessboard.handle_promotion(response)
 
-            if isinstance(response, list) and response[0] == "promotion":
-                if self.engine.current_player == "black":
-                    self.chessboard.change_current_timer(self.chessboard.clocks, 1, 0)
-                else:
-                    self.chessboard.change_current_timer(self.chessboard.clocks, 0, 1)
-
-                self.chessboard.promotion_modal.pop_up(response[1], response[2], response[3])
         else:
             self.engine.current_figure = None
-
-        print(self.engine.current_figure)

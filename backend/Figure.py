@@ -15,7 +15,7 @@ class Element:
         self.position = position
 
     def print_in_console(self):
-        return self.image
+        return self.image[9:]
 
 
 class Figure(Element):
