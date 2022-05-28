@@ -2,12 +2,13 @@
 
 <Cell>:
     size_hint: [None, None]
-    size: [50, 50]
+    size: [70, 70]
+
 
     Image:
         size_hint_y: None
         size_hint_x: None
-        size: 40, 40
+        size: 60, 60
         center: self.parent.center
         source: self.parent.img_source
 
@@ -34,19 +35,22 @@
                 orientation: 'vertical'
                 Label:
                     text: "Biały"
+                    font_size: 30
 
                 Label:
                     text: "{minutes}:{seconds}".format(minutes = chessboard.white_time_as_str_minutes, seconds = chessboard.white_time_as_str_seconds)
+                    font_size: 30
 
             BoxLayout:
                 orientation: 'vertical'
 
                 Label:
                     text: "Czarny"
+                    font_size: 30
 
                 Label:
                     text: "{minutes}:{seconds}".format(minutes = chessboard.black_time_as_str_minutes , seconds = chessboard.black_time_as_str_seconds)
-
+                    font_size: 30
 
 
 
@@ -71,5 +75,6 @@
 
         Label:
             text: chessboard.game_status
+            font_size: 30
 
 

@@ -54,6 +54,8 @@ class PromotionManager():
 
     def forward_submission(self, type):
         self.engine.test_promotion(type, self.element, self.position)
+        if self.engine.state in ["checkmate", "draw"]:
+            self.frontend_chessboard.finished = True
         self.frontend_chessboard.previous_states.hist.pop()
         self.frontend_chessboard.store_chessboard_state()
         self.frontend_chessboard.fill_chessboard()

@@ -3,15 +3,7 @@ import copy
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.lang import Builder
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
-from kivy.graphics import Color, Rectangle, Ellipse
-from kivy.uix.image import Image
-from kivy.clock import Clock
-import time
-from functools import partial
 from backend import Engine as en
 from backend import Vector as v
 from backend import Figure as f
@@ -19,6 +11,13 @@ from backend import History as h
 from backend import TimerManager as tm
 import PromotionModal
 import Cell
+
+def game_status_switcher(status):
+    return {
+        "check": "Szach",
+        "checkmate": "Szach-mat",
+        "draw": "Remis"
+    }.get(status, status)
 
 class GameLayout(BoxLayout):
     chessboard_object = ObjectProperty()
@@ -28,9 +27,21 @@ class GameLayout(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def set_times(self, time_value_in_sec, increment_value):
+    def set_times_and_initiate(self, time_value_in_sec, increment_value):
+        self.chessboard_object.reversed = False
+        self.chessboard_object.paused = False
+        self.chessboard_object.finished = False
+        # self.chessboard_object.current_clicked = None
         self.chessboard_object.timer_manager.set_clocks(time_value_in_sec, increment_value)
         self.chessboard_object.history_widget = self.history_object
+        self.chessboard_object.history_widget.remove_all()
+        self.chessboard_object.engine = en.Engine()
+        self.chessboard_object.previous_states = h.History()
+        self.chessboard_object.store_chessboard_state()
+        self.chessboard_object.board_positions = self.chessboard_object.engine.chessboard.board
+        self.chessboard_object.clear_widgets()
+        self.chessboard_object.fill_chessboard_initial()
+        self.chessboard_object.fill_chessboard()
 
 
 
@@ -44,8 +55,8 @@ class ChessBoard(GridLayout):
     black_time_as_str_seconds = StringProperty()
     black_time_as_str_minutes = StringProperty()
     game_status = StringProperty()
-    increment_value = 0
-    board_positions = engine.chessboard.board
+    # increment_value = 0
+    # board_positions = engine.chessboard.board
     reversed = False
     paused = False
     finished = False
@@ -53,10 +64,10 @@ class ChessBoard(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.current_clicked = None
-        self.fill_chessboard_initial()
+        # self.current_clicked = None
+        # self.fill_chessboard_initial()
         self.promotion_modal = PromotionModal.PromotionManager(self)
-        self.store_chessboard_state()
+        # self.store_chessboard_state()
         self.timer_manager.set_chessboard_widget(self)
 
     def reverse_chessboard(self):
@@ -77,15 +88,18 @@ class ChessBoard(GridLayout):
                 text_to_print = str(7-x) + str(7-y) if self.reversed else str(x)+str(y)
                 self.ids[text_to_print].update_content(self.board_positions[7-x][7-y] if self.reversed else self.board_positions[x][y])
 
-        self.game_status = self.engine.state
+        self.game_status = game_status_switcher(self.engine.state)
+        if self.engine.state in ("checkmate", "draw"):
+            self.finished = True
+            self.paused = True
 
     def store_chessboard_state(self):
         self.previous_states.add_move(self.engine.chessboard, self.game_status)
 
     def restore_chessboard_state(self):
         if (self.previous_states.isUndoPossbile()):
+            self.finished = False
             chessboard_to_replace, status = self.previous_states.delete_move()
-            print(status, "lkjlkjlj")
             self.engine.chessboard = copy.deepcopy(chessboard_to_replace)
             self.board_positions = self.engine.chessboard.board
             self.engine.state = status

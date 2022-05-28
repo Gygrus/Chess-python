@@ -1,3 +1,6 @@
+from kivy.config import Config
+Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+
 from ctypes import windll, c_int64
 windll.user32.SetProcessDpiAwarenessContext(c_int64(-4))
 
@@ -5,7 +8,7 @@ from kivy.config import Config
 # Config.set('graphics', 'resizable', False)
 from kivy.uix.boxlayout import BoxLayout
 
-import chessboard_demo as cbd
+import ChessboardLayout as cbd
 import HistoryView as hv
 from kivy.app import App
 from kivy.lang import Builder
@@ -39,7 +42,7 @@ class ChessBoardView(Screen):
     game_layout_object = ObjectProperty()
 
     def init_chess_game(self, time_value_in_sec, increment_value):
-        self.game_layout_object.set_times(time_value_in_sec, increment_value)
+        self.game_layout_object.set_times_and_initiate(time_value_in_sec, increment_value)
 
 class Options(Screen):
     pass
@@ -49,11 +52,11 @@ class WindowManager(ScreenManager):
 
 
 Builder.load_file("HistoryView.kv")
-Builder.load_file("chessboard.kv")
-Builder.load_file("config-panel.kv")
+Builder.load_file("Chessboard.kv")
+Builder.load_file("GameConfig.kv")
 Builder.load_file("PromotionModal.kv")
 
-kv = Builder.load_file("options.kv")
+kv = Builder.load_file("Screens.kv")
 
 
 class MyMainApp(App):
