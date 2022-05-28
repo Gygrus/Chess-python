@@ -1,0 +1,65 @@
+
+<OptionLabel@Label>:
+    size_hint: None, None
+    size: 200, 50
+    font_size: '25sp'
+    color: 0, 0, 0, 1
+
+<OptionInput@TextInput>:
+    size_hint: None, None
+    size: 200, 50
+    font_size: 20
+    padding: self.height/4
+
+<HoverButton>:
+    size_hint: [None, None]
+    size: [300, 100]
+
+<ConfigurationSettings@AnchorLayout>:
+    anchor_x: 'center'
+    anchor_y: 'center'
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: None, None
+        size: self.minimum_size
+        spacing: 50
+
+        GridLayout:
+            cols: 2
+            rows: 2
+            size_hint: None, None
+            size: self.minimum_size
+            spacing: 90
+
+
+            OptionLabel:
+                text: "Długość gry (min)"
+
+            OptionInput:
+                id: time_value
+                input_type: 'number'
+                input_filter: 'int'
+                text: "10"
+                multiline: False
+
+
+            OptionLabel:
+                text: "Wartość inkrementu (sek)"
+
+
+            OptionInput:
+                id: increment_value
+                input_type: 'number'
+                input_filter: 'int'
+                text: "0"
+                multiline: False
+
+
+        HoverButton:
+            text: "Rozpocznij grę"
+            pos_hint: {'center_x': .5}
+            on_release:
+                app.root.current = "chessboard"
+                app.root.get_screen("chessboard").init_chess_game(time_value.text, increment_value.text)
+

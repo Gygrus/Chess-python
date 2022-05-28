@@ -35,3 +35,6 @@ class HistoryView(ScrollView):
 
     def remove_last(self):
         self.children[0].remove_widget(self.children[0].children[0])
+
+    def remove_all(self):
+        self.children[0].clear_widgets()

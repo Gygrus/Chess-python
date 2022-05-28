@@ -1,0 +1,148 @@
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import Factory kivy.factory.Factory
+
+WindowManager:
+    MainMenu:
+    Options:
+    ChessBoardView:
+
+
+<HoverButton>:
+    size_hint: [None, None]
+    size: [300, 100]
+    font_size: '25sp'
+
+<ChessBoardView>:
+    name: "chessboard"
+    id: chessboardview
+    game_layout_object: game_ui
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        id: anchor1
+
+        canvas.before:
+            Color:
+                rgba: (40/255, 40/255, 40/255, 1)
+
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+
+
+        BoxLayout:
+            orientation: 'horizontal'
+            cols: 3
+            id: chess_view
+
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                id: anchor1
+
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint: None, None
+                    size: self.minimum_size
+                    spacing: 50
+                    id: box1
+
+                    HoverButton:
+                        text: "Odwróć planszę"
+                        on_press:
+                            game_ui.chessboard_object.reverse_chessboard()
+                            game_ui.chessboard_object.revert_chessboard()
+
+                    HoverButton:
+                        text: "Pauza"
+                        on_press:
+                            game_ui.chessboard_object.timer_manager.switch_pause()
+
+                    HoverButton:
+                        text: "Poddaj partię"
+                        on_press:
+                            game_ui.chessboard_object.concede()
+
+                    HoverButton:
+                        text: "Cofnij ruch"
+                        on_press:
+                            game_ui.chessboard_object.restore_chessboard_state()
+
+                    HoverButton:
+                        text: "Powrót"
+                        on_press:
+                            root.manager.transition = FadeTransition()
+                            app.root.current = "options"
+
+
+
+            GameLayout:
+                id: game_ui
+                history_object: history_view
+
+
+            HistoryView:
+                id: history_view
+
+
+
+
+<MainMenu>:
+    name: "main"
+    id: main
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: './assets/background-image.jpg'
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: None, None
+            size: self.minimum_size
+            spacing: 50
+
+            HoverButton:
+                text: "Zagraj"
+                on_release:
+                    root.manager.transition = FadeTransition()
+                    app.root.current = "options"
+
+
+            HoverButton:
+                text: "Wyjdź"
+                on_release: root.quit_application()
+
+
+<Options>:
+    name: "options"
+    id: options
+
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: './assets/background-image.jpg'
+
+    ConfigurationSettings:
+
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'bottom'
+
+        HoverButton:
+            text: "Powrót"
+            on_release:
+                app.root.current = "main"
+
+
+

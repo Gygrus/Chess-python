@@ -63,7 +63,7 @@ class TimerManager:
             time_remaining[1] = 0
 
         if time_remaining[0] <= 0:
-            self.finished = True
+            self.chessboard_widget.finished = True
             if self.chessboard_widget.engine.current_player == "white":
                 self.clocks[0].cancel()
                 self.chessboard_widget.engine.state = "Czarny wygrał!"
@@ -72,7 +72,7 @@ class TimerManager:
                 self.clocks[1].cancel()
                 self.chessboard_widget.engine.state = "Czarny wygrał!"
                 print("Black won")
-            self.chessboard_widget.timer_manager.switch_pause()
+            self.chessboard_widget.paused = not self.chessboard_widget.paused
             self.chessboard_widget.fill_chessboard()
 
 
@@ -86,7 +86,7 @@ class TimerManager:
                 self.clocks[1].cancel()
                 self.chessboard_widget.engine.state = "Biały wygrał!"
                 print("White won")
-            self.chessboard_widget.timer_manager.switch_pause()
+            self.chessboard_widget.paused = not self.chessboard_widget.paused
             self.chessboard_widget.fill_chessboard()
 
         self.update_current_time_counters()
@@ -98,7 +98,6 @@ class TimerManager:
 
 
     def change_current_timer(self, clocks, last_counter, curr_counter):
-        print(last_counter, curr_counter)
         if not isinstance(clocks[last_counter], int):
             clocks[last_counter].cancel()
         if not isinstance(clocks[curr_counter], int):
@@ -115,7 +114,6 @@ class TimerManager:
         self.chessboard_widget.black_time_as_str_seconds = str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10) if len(str(self.times[1] % 600 // 10)) > 1 else str(0)+str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10)
 
     def handle_clock_change_after_promotion(self):
-
         if self.chessboard_widget.engine.current_player == "white":
             self.times[1] -= self.increment_value*10
             self.change_current_timer(self.clocks, 1, 0)
@@ -126,5 +124,7 @@ class TimerManager:
     def switch_clocks(self):
         if isinstance(self.clocks[0], int):
             self.change_current_timer(self.clocks, 1, 0)
+            self.increment_time(1, -self.increment_value)
         else:
             self.change_current_timer(self.clocks, 0, 1)
+            self.increment_time(0, -self.increment_value)
