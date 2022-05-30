@@ -1,6 +1,3 @@
-from enum import Enum
-
-
 class Vector:
 
     def __init__(self, x, y):
@@ -87,14 +84,3 @@ class Vector:
 
     def column_distance(self, other, difference):
         return abs(self.y - other.y) == difference
-
-
-class Direction(Enum):
-    UP = Vector(-1, 0),
-    DOWN = Vector(1, 0),
-    RIGHT = Vector(0, 1),
-    LEFT = Vector(0, -1),
-    UP_RIGHT = Vector(-1, 1),
-    UP_LEFT = Vector(-1, -1),
-    DOWN_RIGHT = Vector(1, 1),
-    DOWN_LEFT = Vector(1, -1)

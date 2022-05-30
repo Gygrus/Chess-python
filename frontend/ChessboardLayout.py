@@ -97,7 +97,7 @@ class ChessBoard(GridLayout):
         self.previous_states.add_move(self.engine.chessboard, self.game_status)
 
     def restore_chessboard_state(self):
-        if (self.previous_states.isUndoPossbile()):
+        if (self.previous_states.is_undo_possible()):
             self.finished = False
             chessboard_to_replace, status = self.previous_states.delete_move()
             self.engine.chessboard = copy.deepcopy(chessboard_to_replace)

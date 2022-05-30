@@ -13,5 +13,5 @@ class History:
         self.hist.pop()
         return self.hist[-1]
 
-    def isUndoPossbile(self):
+    def is_undo_possible(self):
         return len(self.hist) > 1

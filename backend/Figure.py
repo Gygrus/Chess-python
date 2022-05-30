@@ -1,11 +1,5 @@
 import copy
-
-from backend.Chessboard import *
-from backend.Vector import *
-
-
-def column(x):
-    return {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7,}[x]
+from backend.Vector import Vector
 
 
 class Element:
@@ -22,7 +16,6 @@ class Figure(Element):
     def __init__(self, position):
         Element.__init__(self, position)
         self.position = position
-        self.alive = 'yes'
         self.moves = []
 
     def one_line(self, destination):
@@ -36,14 +29,14 @@ class Figure(Element):
 
     def direction(self, destination):
         if self.one_line(destination):
-            return Direction.UP if self.position.move_line_up(destination) else Direction.DOWN
+            return Vector(-1, 0) if self.position.move_line_up(destination) else Vector(1, 0)
         if self.one_row(destination):
-            return Direction.RIGHT if self.position.move_row_right(destination) else Direction.LEFT
+            return Vector(0, 1) if self.position.move_row_right(destination) else Vector(0, -1)
         if self.one_diagonal(destination):
             if self.position.move_line_up(destination):
-                return Direction.UP_RIGHT if self.position.move_row_right(destination) else Direction.UP_LEFT
+                return Vector(-1, 1) if self.position.move_row_right(destination) else Vector(-1, -1)
             else:
-                return Direction.DOWN_RIGHT if self.position.move_row_right(destination) else Direction.DOWN_LEFT
+                return Vector(1,  1) if self.position.move_row_right(destination) else Vector(1, -1)
 
     def calculate(self, engine):
         for i in range(8):
@@ -51,7 +44,8 @@ class Figure(Element):
                 if engine.chessboard.is_possible_move(self, Vector(i, j)):
                     old_eng = copy.deepcopy(engine)
                     old_eng.move(self.position, Vector(i, j))
-                    king_position = old_eng.chessboard.white_king_position if old_eng.current_player == 'white' else old_eng.chessboard.black_king_position
+                    king_position = old_eng.chessboard.white_king_position if old_eng.current_player == 'white'\
+                        else old_eng.chessboard.black_king_position
                     col = 'white' if old_eng.current_player == 'black' else 'black'
                     if not old_eng.chessboard.is_check(king_position, col):
                         self.moves.append(Vector(i, j))

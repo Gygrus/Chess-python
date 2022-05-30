@@ -1,6 +1,6 @@
-
 from kivy.clock import Clock
 from functools import partial
+
 
 class TimerManager:
     increment_value = 0
@@ -9,7 +9,6 @@ class TimerManager:
     def __init__(self):
         self.times = [3600, 3600]
         self.clocks = [0, 0]
-
 
     def set_chessboard_widget(self, chessboard_widget):
         self.chessboard_widget = chessboard_widget
@@ -43,18 +42,16 @@ class TimerManager:
         self.clocks[0] = Clock.schedule_interval(partial(self.decrement_time, self.times, 0), 0.1)
         self.increment_value = int(increment_value)
 
-
     def decrement_time(self, time_remaining, index, *largs):
         if self.chessboard_widget.finished:
             self.chessboard_widget.paused = True
 
-        if self.chessboard_widget.paused or (index == 0 and self.chessboard_widget.engine.current_player == "black") or \
-                (index == 1 and self.chessboard_widget.engine.current_player == "white") \
+        if self.chessboard_widget.paused or (index == 0 and self.chessboard_widget.engine.current_player == "black")\
+                or (index == 1 and self.chessboard_widget.engine.current_player == "white") \
                 or self.chessboard_widget.finished:
             return False
 
         time_remaining[index] -= 1
-
 
         if time_remaining[0] <= 0:
             time_remaining[0] = 0
@@ -75,7 +72,6 @@ class TimerManager:
             self.chessboard_widget.paused = not self.chessboard_widget.paused
             self.chessboard_widget.fill_chessboard()
 
-
         elif time_remaining[1] <= 0:
             self.chessboard_widget.finished = True
             if self.chessboard_widget.engine.current_player == "white":
@@ -91,11 +87,9 @@ class TimerManager:
 
         self.update_current_time_counters()
 
-
     def increment_time(self, curr_counter, increment_value):
         self.times[curr_counter] += increment_value*10
         self.update_current_time_counters()
-
 
     def change_current_timer(self, clocks, last_counter, curr_counter):
         if not isinstance(clocks[last_counter], int):
@@ -108,10 +102,16 @@ class TimerManager:
         self.increment_time(last_counter, self.increment_value)
 
     def update_current_time_counters(self):
-        self.chessboard_widget.white_time_as_str_minutes = str(self.times[0] // 600) if len(str(self.times[0] // 600)) > 1 else str(0)+str(self.times[0] // 600)
-        self.chessboard_widget.white_time_as_str_seconds = str(self.times[0] % 600 // 10) + ":" + str(self.times[0] % 10) if len(str(self.times[0] % 600 // 10)) > 1 else str(0)+str(self.times[0] % 600 // 10) + ":" + str(self.times[0] % 10)
-        self.chessboard_widget.black_time_as_str_minutes = str(self.times[1] // 600) if len(str(self.times[1] // 600)) > 1 else str(0)+str(self.times[1] // 600)
-        self.chessboard_widget.black_time_as_str_seconds = str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10) if len(str(self.times[1] % 600 // 10)) > 1 else str(0)+str(self.times[1] % 600 // 10) + ":" + str(self.times[1] % 10)
+        t0 = self.times[0]
+        t1 = self.times[1]
+        self.chessboard_widget.white_time_as_str_minutes = str(t0 // 600)\
+            if len(str(t0 // 600)) > 1 else str(0)+str(t0 // 600)
+        self.chessboard_widget.white_time_as_str_seconds = str(t0 % 600 // 10) + ":" + str(t0 % 10)\
+            if len(str(t0 % 600 // 10)) > 1 else str(0)+str(t0 % 600 // 10) + ":" + str(t0 % 10)
+        self.chessboard_widget.black_time_as_str_minutes = str(t1 // 600)\
+            if len(str(t1 // 600)) > 1 else str(0)+str(t1 // 600)
+        self.chessboard_widget.black_time_as_str_seconds = str(t1 % 600 // 10) + ":" + str(t1 % 10)\
+            if len(str(t1 % 600 // 10)) > 1 else str(0)+str(t1 % 600 // 10) + ":" + str(t1 % 10)
 
     def handle_clock_change_after_promotion(self):
         if self.chessboard_widget.engine.current_player == "white":

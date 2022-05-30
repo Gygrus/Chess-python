@@ -1,12 +1,5 @@
-from backend.Figure import *
-from backend.Figure import Figure, Element
-from backend.Vector import *
-
-
-def map_direction(direction):
-    return {Direction.UP: Vector(-1, 0), Direction.LEFT: Vector(0, -1), Direction.RIGHT: Vector(0, 1),
-            Direction.DOWN: Vector(1, 0), Direction.UP_RIGHT: Vector(-1, 1), Direction.UP_LEFT: Vector(-1, -1),
-            Direction.DOWN_RIGHT: Vector(1, 1), Direction.DOWN_LEFT: Vector(1, -1)}[direction]
+from backend.Figure import Figure, Element, Pawn, Rook, King, Knight, Bishop, Queen
+from backend.Vector import Vector
 
 
 class Chessboard:
@@ -41,10 +34,6 @@ class Chessboard:
         self.board[0][6] = Knight('black', Vector(0, 6))
         self.board[0][7] = Rook('black', Vector(0, 7))
 
-        # self.board[2][0] = King('white', Vector(2, 0))
-        # self.board[7][7] = Rook('white', Vector(7, 7))
-        # self.board[0][0] = King('black', Vector(0, 0))
-
     def print_board(self):
         print('   a   b   c  d   e   f  g   h')
         for i in range(8):
@@ -65,19 +54,18 @@ class Chessboard:
         return self.board[position.x][position.y].color
 
     def move_object(self, old_position, element):
-        killed = False
-        position = element.position
+        killed, position = False, element.position
         if isinstance(element, Pawn):
             if not self.is_figure(position) and old_position.y != element.position.y:
                 if element.color == 'white':
                     self.board[position.x + 1][position.y] = Element(Vector(position.x + 1, position.y))
-                    killed = True
                 else:
                     self.board[position.x - 1][position.y] = Element(Vector(position.x - 1, position.y))
-                    killed = True
+                killed = True
 
         if isinstance(self.object_at(position), Figure):
             killed = True
+
         if isinstance(element, King):
             if element.color == 'white':
                 self.white_king_position = position
@@ -163,7 +151,7 @@ class Chessboard:
                 return False
 
             position = element.position
-            iterator = map_direction(element.direction(destination))
+            iterator = element.direction(destination)
 
             while not position.equal(destination):
                 position = position.add(iterator)
@@ -216,12 +204,11 @@ class Chessboard:
                         continue
 
                     attacker_position = element.position
-                    iterator = map_direction(element.direction(position))
+                    iterator = element.direction(position)
 
                     while not attacker_position.equal(position):
                         attacker_position = attacker_position.add(iterator)
                         if attacker_position.equal(position):
-                            print(element.position.x, element.position.y)
                             return True
                         else:
                             if self.is_figure(attacker_position):
