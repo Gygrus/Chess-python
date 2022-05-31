@@ -49,7 +49,7 @@ class Engine:
         self.current_player = 'black' if self.current_player == 'white' else 'white'
         self.clear_moves_in_figures()
         self.calculate_possible_moves()
-        king_position = self.chessboard.white_king_position if self.current_player == 'white'\
+        king_position = self.chessboard.white_king_position if self.current_player == 'white' \
             else self.chessboard.black_king_position
         col = 'white' if self.current_player == 'black' else 'black'
         if self.chessboard.is_check(king_position, col):
@@ -58,6 +58,9 @@ class Engine:
                 self.state = "checkmate"
                 return
         else:
+            if self.no_mate_possible():
+                self.state = "draw"
+                return
             if self.is_opponent_has_no_moves():
                 self.state = "draw"
                 return
@@ -165,6 +168,31 @@ class Engine:
                         return False
         return True
 
+    def no_mate_possible(self):
+        white_counter, black_counter = 0, 0
+        white_figure, black_figure = None, None
+        for i in range(8):
+            for j in range(8):
+                element = self.chessboard.object_at(Vector(i, j))
+                if not isinstance(element, King) and isinstance(element, Figure):
+                    if element.color == 'white':
+                        white_figure = element
+                        white_counter += 1
+                    else:
+                        black_figure = element
+                        black_counter += 1
+                if black_counter + white_counter > 1:
+                    return False
+
+        if black_counter == 0 and white_counter == 0:
+            return True
+
+        if black_counter == 1 and white_counter == 0 and isinstance(black_figure, (Bishop, Knight)):
+            return True
+
+        if black_counter == 0 and white_counter == 1 and isinstance(white_figure, (Bishop, Knight)):
+            return True
+
     def promotion(self):
         row = 0 if self.current_player == 'white' else 7
         for i in range(8):
@@ -198,7 +226,7 @@ class Engine:
         self.piece = []
         self.clear_moves_in_figures()
         self.calculate_possible_moves()
-        king_position = self.chessboard.white_king_position if self.current_player == 'white' else\
+        king_position = self.chessboard.white_king_position if self.current_player == 'white' else \
             self.chessboard.black_king_position
         col = 'white' if self.current_player == 'black' else 'black'
         if self.chessboard.is_check(king_position, col):
