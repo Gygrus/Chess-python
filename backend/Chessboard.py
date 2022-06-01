@@ -108,58 +108,54 @@ class Chessboard:
         if isinstance(figure, Figure) and figure.color == element.color:
             return False
 
-        if isinstance(element, Knight):
-            for move in self.knight_moves:
-                if element.position.add(move).equal(destination):
-                    return True
-            return False
-
-        if isinstance(element, King):
-            for move in self.king_moves:
-                if element.position.add(move).equal(destination):
-                    return True
-            return False
-
-        if isinstance(element, Pawn):
-            if element.color == 'white':
-                if element.position.up().equal(destination) and not isinstance(figure, Figure):
-                    return True
-                if element.position.up().right().equal(destination) and isinstance(figure, Figure):
-                    return True
-                if element.position.up().left().equal(destination) and isinstance(figure, Figure):
-                    return True
-                if element.is_starting_row() and destination.equal(element.position.up().up()):
-                    if not self.is_figure(element.position.up()) and not isinstance(figure, Figure):
+        match element:
+            case Knight():
+                for move in self.knight_moves:
+                    if element.position.add(move).equal(destination):
                         return True
-                if element.en_passant.up().equal(destination):
-                    return True
-            else:
-                if element.position.down().equal(destination) and not isinstance(figure, Figure):
-                    return True
-                if element.position.down().right().equal(destination) and isinstance(figure, Figure):
-                    return True
-                if element.position.down().left().equal(destination) and isinstance(figure, Figure):
-                    return True
-                if element.is_starting_row() and destination.equal(element.position.down().down()):
-                    if not self.is_figure(element.position.down()) and not isinstance(figure, Figure):
+            case King():
+                for move in self.king_moves:
+                    if element.position.add(move).equal(destination):
                         return True
-                if element.en_passant.down().equal(destination):
-                    return True
-
-        if isinstance(element, (Rook, Bishop, Queen)):
-            if not element.correct_move(destination):
-                return False
-
-            position = element.position
-            iterator = element.direction(destination)
-
-            while not position.equal(destination):
-                position = position.add(iterator)
-                if position.equal(destination):
-                    return True
+            case Pawn():
+                if element.color == 'white':
+                    if element.position.up().equal(destination) and not isinstance(figure, Figure):
+                        return True
+                    if element.position.up().right().equal(destination) and isinstance(figure, Figure):
+                        return True
+                    if element.position.up().left().equal(destination) and isinstance(figure, Figure):
+                        return True
+                    if element.is_starting_row() and destination.equal(element.position.up().up()):
+                        if not self.is_figure(element.position.up()) and not isinstance(figure, Figure):
+                            return True
+                    if element.en_passant.up().equal(destination):
+                        return True
                 else:
-                    if self.is_figure(position):
-                        return False
+                    if element.position.down().equal(destination) and not isinstance(figure, Figure):
+                        return True
+                    if element.position.down().right().equal(destination) and isinstance(figure, Figure):
+                        return True
+                    if element.position.down().left().equal(destination) and isinstance(figure, Figure):
+                        return True
+                    if element.is_starting_row() and destination.equal(element.position.down().down()):
+                        if not self.is_figure(element.position.down()) and not isinstance(figure, Figure):
+                            return True
+                    if element.en_passant.down().equal(destination):
+                        return True
+            case Rook() | Bishop() | Queen():
+                if not element.correct_move(destination):
+                    return False
+
+                position = element.position
+                iterator = element.direction(destination)
+
+                while not position.equal(destination):
+                    position = position.add(iterator)
+                    if position.equal(destination):
+                        return True
+                    else:
+                        if self.is_figure(position):
+                            return False
         return False
 
     def is_check(self, position, color):
