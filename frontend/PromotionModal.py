@@ -1,7 +1,7 @@
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty, ObjectProperty
 from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager
+
 
 class PromotionModal(Popup):
     text = StringProperty()

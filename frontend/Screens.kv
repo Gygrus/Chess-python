@@ -49,6 +49,8 @@ WindowManager:
                     spacing: 50
                     id: box1
 
+
+
                     HoverButton:
                         text: "Odwróć planszę"
                         on_press:
@@ -67,6 +69,7 @@ WindowManager:
 
                     HoverButton:
                         text: "Cofnij ruch"
+                        disabled: game_ui.chessboard_object.finished
                         on_press:
                             game_ui.chessboard_object.restore_chessboard_state()
 

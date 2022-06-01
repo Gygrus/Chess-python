@@ -4,10 +4,6 @@ Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 from ctypes import windll, c_int64
 windll.user32.SetProcessDpiAwarenessContext(c_int64(-4))
 
-from kivy.config import Config
-# Config.set('graphics', 'resizable', False)
-from kivy.uix.boxlayout import BoxLayout
-
 import ChessboardLayout as cbd
 import HistoryView as hv
 from kivy.app import App
@@ -16,7 +12,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
 from kivy.uix.button import Button
-from kivy.config import Config
+
 
 class HoverButton(Button):
 

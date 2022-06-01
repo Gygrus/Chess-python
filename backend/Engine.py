@@ -234,10 +234,13 @@ class Engine:
             if self.is_opponent_has_no_moves():
                 self.state = "checkmate"
                 return
+            return
         else:
             if self.is_opponent_has_no_moves():
                 self.state = "draw"
                 return
+
+        self.state = ""
 
     def convert_record(self):
         if len(self.piece) == 2:
