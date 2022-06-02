@@ -5,7 +5,7 @@ from backend.Vector import Vector
 class Element:
     def __init__(self, position):
         self.color = 'black' if position.black_or_white_cell() else 'white'
-        self.image = './assets/blank.png' if position.black_or_white_cell() else './assets/blank.png'
+        self.image = 'frontend/assets/blank.png' if position.black_or_white_cell() else 'frontend/assets/blank.png'
         self.position = position
 
     def print_in_console(self):
@@ -62,7 +62,7 @@ class Pawn(Figure):
         Figure.__init__(self, position)
         self.color = color
         self.position = position
-        self.image = './assets/pw.png' if self.color == 'white' else './assets/pb.png'
+        self.image = 'frontend/assets/pw.png' if self.color == 'white' else 'frontend/assets/pb.png'
         self.en_passant = Vector(20, 20)
 
     def is_starting_row(self):
@@ -74,7 +74,7 @@ class Knight(Figure):
         Figure.__init__(self, position)
         self.color = color
         self.position = position
-        self.image = './assets/kw.png' if self.color == 'white' else './assets/kb.png'
+        self.image = 'frontend/assets/kw.png' if self.color == 'white' else 'frontend/assets/kb.png'
 
 
 class Bishop(Figure):
@@ -82,7 +82,7 @@ class Bishop(Figure):
         Figure.__init__(self, position)
         self.color = color
         self.position = position
-        self.image = './assets/bw.png' if self.color == 'white' else './assets/bb.png'
+        self.image = 'frontend/assets/bw.png' if self.color == 'white' else 'frontend/assets/bb.png'
 
     def correct_move(self, destination):
         return self.one_diagonal(destination)
@@ -94,7 +94,7 @@ class Rook(Figure):
         self.color = color
         self.position = position
         self.right_to_castling = 'yes'
-        self.image = './assets/rw.png' if self.color == 'white' else './assets/rb.png'
+        self.image = 'frontend/assets/rw.png' if self.color == 'white' else 'frontend/assets/rb.png'
 
     def correct_move(self, destination):
         return self.one_row(destination) or self.one_line(destination)
@@ -105,7 +105,7 @@ class Queen(Figure):
         Figure.__init__(self, position)
         self.color = color
         self.position = position
-        self.image = './assets/qw.png' if self.color == 'white' else './assets/qb.png'
+        self.image = 'frontend/assets/qw.png' if self.color == 'white' else 'frontend/assets/qb.png'
 
     def correct_move(self, destination):
         return self.one_row(destination) or self.one_line(destination) or self.one_diagonal(destination)
@@ -117,7 +117,7 @@ class King(Figure):
         self.color = color
         self.position = position
         self.right_to_castling = 'yes'
-        self.image = './assets/kingw.png' if self.color == 'white' else './assets/kingb.png'
+        self.image = 'frontend/assets/kingw.png' if self.color == 'white' else 'frontend/assets/kingb.png'
 
     def initial_position(self):
         return self.position.equal(Vector(7, 4)) or self.position.equal(Vector(0, 4))

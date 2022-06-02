@@ -7,8 +7,8 @@ from kivy.properties import StringProperty, ObjectProperty, BooleanProperty
 from backend import Engine as en
 from backend import History as h
 from backend import TimerManager as tm
-import PromotionModal
-import Cell
+from frontend import PromotionModal
+from frontend import Cell
 
 
 def game_status_switcher(status):

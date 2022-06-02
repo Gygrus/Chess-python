@@ -95,6 +95,13 @@ WindowManager:
 <MainMenu>:
     name: "main"
     id: main
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 0.8)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
 
     AnchorLayout:
         anchor_x: 'center'
@@ -105,7 +112,9 @@ WindowManager:
             Rectangle:
                 pos: self.pos
                 size: self.size
-                source: './assets/background-image.jpg'
+                source: 'frontend/assets/tlo2.jpg'
+
+
 
         BoxLayout:
             orientation: "vertical"
@@ -113,16 +122,38 @@ WindowManager:
             size: self.minimum_size
             spacing: 50
 
-            HoverButton:
-                text: "Zagraj"
-                on_release:
-                    root.manager.transition = FadeTransition()
-                    app.root.current = "options"
+            Label:
+                size_hint: [None, None]
+                size: 600, 300
+
+                canvas.before:
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                        source: 'frontend/assets/wietchess.png'
+
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint: None, None
+                    size: self.minimum_size
+                    spacing: 50
 
 
-            HoverButton:
-                text: "Wyjdź"
-                on_release: root.quit_application()
+
+                    HoverButton:
+                        text: "Zagraj"
+                        on_release:
+                            root.manager.transition = FadeTransition()
+                            app.root.current = "options"
+
+
+                    HoverButton:
+                        text: "Wyjdź"
+                        on_release: root.quit_application()
 
 
 <Options>:
@@ -133,7 +164,7 @@ WindowManager:
         Rectangle:
             pos: self.pos
             size: self.size
-            source: './assets/background-image.jpg'
+            source: 'frontend/assets/tlo1.jpg'
 
     ConfigurationSettings:
 

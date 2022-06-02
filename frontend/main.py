@@ -4,8 +4,8 @@ Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 from ctypes import windll, c_int64
 windll.user32.SetProcessDpiAwarenessContext(c_int64(-4))
 
-import ChessboardLayout as cbd
-import HistoryView as hv
+from frontend import ChessboardLayout as cbd
+from frontend import HistoryView as hv
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
@@ -47,17 +47,21 @@ class WindowManager(ScreenManager):
     pass
 
 
-Builder.load_file("HistoryView.kv")
-Builder.load_file("Chessboard.kv")
-Builder.load_file("GameConfig.kv")
-Builder.load_file("PromotionModal.kv")
+Builder.load_file("frontend/HistoryView.kv")
+Builder.load_file("frontend/Chessboard.kv")
+Builder.load_file("frontend/GameConfig.kv")
+Builder.load_file("frontend/PromotionModal.kv")
 
-kv = Builder.load_file("Screens.kv")
+kv = Builder.load_file("frontend/Screens.kv")
 
 
 class MyMainApp(App):
     def build(self):
         return kv
+
+def run_app():
+    Window.fullscreen = 'auto'
+    MyMainApp().run()
 
 if __name__ == "__main__":
     Window.fullscreen = 'auto'

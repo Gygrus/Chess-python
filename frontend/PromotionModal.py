@@ -19,15 +19,15 @@ class PromotionModal(Popup):
         self.manager = manager
 
         if self.text == "white":
-            self.rook_img = "./assets/rw.png"
-            self.queen_img = "./assets/qw.png"
-            self.bishop_img = "./assets/bw.png"
-            self.knight_img = "./assets/kw.png"
+            self.rook_img = "frontend/assets/rw.png"
+            self.queen_img = "frontend/assets/qw.png"
+            self.bishop_img = "frontend/assets/bw.png"
+            self.knight_img = "frontend/assets/kw.png"
         else:
-            self.rook_img = "./assets/rb.png"
-            self.queen_img = "./assets/qb.png"
-            self.bishop_img = "./assets/bb.png"
-            self.knight_img = "./assets/kb.png"
+            self.rook_img = "frontend/assets/rb.png"
+            self.queen_img = "frontend/assets/qb.png"
+            self.bishop_img = "frontend/assets/bb.png"
+            self.knight_img = "frontend/assets/kb.png"
 
     def submit_promotion(self, type):
         self.manager.forward_submission(type)

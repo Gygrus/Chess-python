@@ -3,7 +3,7 @@ from kivy.properties import StringProperty
 from kivy.uix.label import Label
 from backend import Vector as v
 from backend import Figure as f
-import ChessboardLayout as cd
+from frontend import ChessboardLayout as cd
 
 
 def create_cord_caption(cell_id, reversed):

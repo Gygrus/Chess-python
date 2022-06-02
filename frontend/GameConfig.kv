@@ -1,15 +1,17 @@
 
 <OptionLabel@Label>:
     size_hint: None, None
-    size: 200, 50
+    size: 370, 50
     font_size: '25sp'
     color: 0, 0, 0, 1
+
 
 <OptionInput@TextInput>:
     size_hint: None, None
     size: 200, 50
     font_size: 20
     padding: self.height/4
+
 
 <HoverButton>:
     size_hint: [None, None]
@@ -18,12 +20,19 @@
 <ConfigurationSettings@AnchorLayout>:
     anchor_x: 'center'
     anchor_y: 'center'
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 0.3)
+        Rectangle:
+            size: self.size
+            pos: self.pos
 
     BoxLayout:
         orientation: 'vertical'
         size_hint: None, None
         size: self.minimum_size
         spacing: 50
+
 
         GridLayout:
             cols: 2
@@ -33,8 +42,11 @@
             spacing: 90
 
 
+
+
             OptionLabel:
                 text: "Długość gry (min)"
+
 
             OptionInput:
                 id: time_value
@@ -46,6 +58,7 @@
 
             OptionLabel:
                 text: "Wartość inkrementu (sek)"
+
 
 
             OptionInput:
